@@ -4,6 +4,7 @@ ruby '2.2.0'
 
 gem 'rails', '4.2.3'
 gem 'rails-api', '0.4.0'
+gem 'rack-cors', '0.4.0'
 
 group :development, :test do
   gem 'spring', '1.3.6'

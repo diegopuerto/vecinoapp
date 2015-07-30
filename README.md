@@ -30,21 +30,14 @@ Luego creamos un repositorio remoto en Bitbucket y lo asociamos al repositorio l
 
 ## Inicia Gemfile
 
-
+    commit 79e98cd49a920325ac5b52b4b399cab1b22f3f4e
 
 Editamos el `Gemfile` y corremos el comando `bundle update` para que el API quede actualizado y con las gemas básicas para su funcionamiento.
 
-    ## Gemfile
-    source 'https://rubygems.org'
-
-    ruby '2.2.0'
-
-    gem 'rails', '4.2.3'
-    gem 'rails-api', '0.4.0'
-
-    group :development, :test do
-      gem 'spring', '1.3.6'
-      gem 'sqlite3', '1.3.10'
-    end
-
 A medida que se vayan agregando funcionalidades se irán instalando las gemas requeridas.
+
+## Configura [CORS](http://www.w3.org/TR/cors/)
+
+    commit
+
+Instalamos la gema `rack-cors` agregándola al `Gemfile` y corriendo `bundle install`. Luego la configuramos en `config/application.rb`.
