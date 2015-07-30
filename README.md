@@ -56,9 +56,17 @@ Se edita el `Gemfile` y se corre `bundle update`
 
 Instalamos la gema `rails-erd` en el entorno de desarrollo para generar de forma automática diagramas entidad-relación a partir de los modelos utilizados por el API. Los diagramas se generan con `rake erd`. [Más info](https://github.com/voormedia/rails-erd).
 
-## Configura Producción
+## Implementa ruta y controlador de prueba
 
     commit
+
+Para probar el API configuramos la ruta raíz para que apunte a un controlador de prueba.
+
+Escribimos el controlador de prueba que debe entregar un objeto en formato JSON.
+
+## Configura Producción
+
+    commit 1bbf43d704fda6d69ee1aab8aa29a4c361f54e29
 
 Para subir el API a un entorno de producción primero debemos habilitar la conexión segura con SSL agregando la línea `config.force_ssl = true` en `config/environments/production.rb`.
 
