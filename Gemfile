@@ -12,3 +12,9 @@ group :development, :test do
   gem 'sqlite3', '1.3.10'
   gem 'rails-erd', '1.4.1'
 end
+
+group :production do
+  gem 'pg', '0.18.2'
+  gem 'rails_12factor', '0.0.3'
+  gem 'puma', '2.12.2'
+end

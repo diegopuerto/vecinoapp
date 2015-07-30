@@ -52,5 +52,40 @@ Se edita el `Gemfile` y se corre `bundle update`
 
 ## Instala Generador de Diagramas
 
+    commit 6dd7f714c0317ac92533ae4f90ee247201a0c8fc
 
 Instalamos la gema `rails-erd` en el entorno de desarrollo para generar de forma automática diagramas entidad-relación a partir de los modelos utilizados por el API. Los diagramas se generan con `rake erd`. [Más info](https://github.com/voormedia/rails-erd).
+
+## Configura Producción
+
+    commit
+
+Para subir el API a un entorno de producción primero debemos habilitar la conexión segura con SSL agregando la línea `config.force_ssl = true` en `config/environments/production.rb`.
+
+Luego instalamos las gemas que vamos a utilizar en producción: el servidor `puma`, la gema para PostgreSQL `pg` y la gema `rails_12factor`.
+
+Agregamos estas gemas al `Gemfile` y corremos `bundle install --without production` para actualizar el `Gemfile.lock`.
+
+Creamos el archivo de configuración del servidor Puma `config/puma.rb`
+
+Para correr el servidor Puma en producción tenemos que agregar un archivo `Procfile` con las instrucciones.
+
+### Heroku
+
+Verificamos que `heroku` esté instalado
+
+    $ heroku version
+
+Creamos una cuenta en `heroku.com` e iniciamos sesión
+
+    $ heroku login
+
+Generamos una llave pública para autenticarnos en Heroku con `ssh-keygen` y la guardamos en `~/.ssh` y luego la agregamos
+
+    $ heroku keys:add
+
+Ahora creamos la aplicación y le ponemos un nombre
+
+    $ heroku create api-vecino
+
+Y finalmente hacemos el commit y subimos la aplicación a producción utilizando `git`. A Heroku solo se sube la rama `master`, así que nos pasamos a la rama `master`, hacemos `merge` con la rama `00-configuracion-api` y subimos a heroku.
