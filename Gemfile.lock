@@ -101,6 +101,6 @@ PLATFORMS
 
 DEPENDENCIES
   rails (= 4.2.3)
-  rails-api
-  spring
-  sqlite3
+  rails-api (= 0.4.0)
+  spring (= 1.3.6)
+  sqlite3 (= 1.3.10)
