@@ -44,8 +44,13 @@ Instalamos la gema `rack-cors` agregándola al `Gemfile` y corriendo `bundle ins
 
 ## Configura Serialización
 
-    commit 
+    commit 6f86178a0a4513f49939837cead53a3c299aa14d
 
 Instalamos la gema `active_model_serializers` con la cual vamos a serializar los recursos para que sean consumidos en formato JSON por los clientes Angular.
 
 Se edita el `Gemfile` y se corre `bundle update`
+
+## Instala Generador de Diagramas
+
+
+Instalamos la gema `rails-erd` en el entorno de desarrollo para generar de forma automática diagramas entidad-relación a partir de los modelos utilizados por el API. Los diagramas se generan con `rake erd`. [Más info](https://github.com/voormedia/rails-erd).
