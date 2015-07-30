@@ -38,6 +38,14 @@ A medida que se vayan agregando funcionalidades se irán instalando las gemas re
 
 ## Configura [CORS](http://www.w3.org/TR/cors/)
 
-    commit
+    commit 17c7ea8589fef3a6bd39f65c944a227f10fe4487
 
 Instalamos la gema `rack-cors` agregándola al `Gemfile` y corriendo `bundle install`. Luego la configuramos en `config/application.rb`.
+
+## Configura Serialización
+
+    commit 
+
+Instalamos la gema `active_model_serializers` con la cual vamos a serializar los recursos para que sean consumidos en formato JSON por los clientes Angular.
+
+Se edita el `Gemfile` y se corre `bundle update`
