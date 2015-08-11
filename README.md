@@ -58,7 +58,7 @@ Instalamos la gema `rails-erd` en el entorno de desarrollo para generar de forma
 
 ## Implementa ruta y controlador de prueba
 
-    commit
+    commit 1a893b48fdd7a1d1ed6eec9c10b7b9c2427136a4
 
 Para probar el API configuramos la ruta raíz para que apunte a un controlador de prueba.
 
@@ -97,3 +97,9 @@ Ahora creamos la aplicación y le ponemos un nombre
     $ heroku create api-vecino
 
 Y finalmente hacemos el commit y subimos la aplicación a producción utilizando `git`. A Heroku solo se sube la rama `master`, así que nos pasamos a la rama `master`, hacemos `merge` con la rama `00-configuracion-api` y subimos a heroku.
+
+## BUG - Cambia versión de gema
+
+La gema `active_model_serializers` no funciona bien si se utiliza la versión más reciente (`0.9.3`), por lo que se cambia la versión a la `0.8.3`. Editamos el `Gemfile` y corremos `bundle install`.
+
+# Usuarios
