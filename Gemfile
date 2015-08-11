@@ -6,6 +6,10 @@ gem 'rails', '4.2.3'
 gem 'rails-api', '0.4.0'
 gem 'rack-cors', '0.4.0'
 gem 'active_model_serializers', '0.8.3'
+gem 'devise', '3.5.1'
+gem 'devise_token_auth', '0.1.31'
+gem 'omniauth', '1.2.2'
+
 
 group :development, :test do
   gem 'spring', '1.3.6'

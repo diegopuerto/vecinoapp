@@ -103,3 +103,13 @@ Y finalmente hacemos el commit y subimos la aplicación a producción utilizando
 La gema `active_model_serializers` no funciona bien si se utiliza la versión más reciente (`0.9.3`), por lo que se cambia la versión a la `0.8.3`. Editamos el `Gemfile` y corremos `bundle install`.
 
 # Usuarios
+
+Creamos una nueva rama para esta funcionalidad.
+
+    $ git checkout -b 01-usuarios
+
+## Instala devise_token_auth
+
+    commit 
+
+Primero agregamos las gemas `devise`, `devise_token_auth` y `omniauth` y las instalamos con `bundle update`
