@@ -11,6 +11,7 @@ group :development, :test do
   gem 'spring', '1.3.6'
   gem 'sqlite3', '1.3.10'
   gem 'rails-erd', '1.4.1'
+  gem 'rspec-rails', '~> 3.3.3'
 end
 
 group :production do

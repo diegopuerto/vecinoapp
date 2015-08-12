@@ -102,4 +102,22 @@ Y finalmente hacemos el commit y subimos la aplicación a producción utilizando
 
 La gema `active_model_serializers` no funciona bien si se utiliza la versión más reciente (`0.9.3`), por lo que se cambia la versión a la `0.8.3`. Editamos el `Gemfile` y corremos `bundle install`.
 
-# Usuarios
+## Instala y configura RSpec
+
+    commit 
+
+[Rspec](https://en.wikipedia.org/wiki/RSpec) es un framework de [desarrollo dirigido por comportamiento](https://en.wikipedia.org/wiki/Behavior-driven_development) escrito para Ruby.
+
+Agregamos la gema `rspec-rails` al `Gemfile` y la instalamos con `bundle install`
+
+Luego generamos los archivos de configuración
+
+    $ rails generate rspec:install
+
+Este comando nos genera los archivos
+
+  * `.rspec`
+  * `spec/spec_helper.rb`
+  * `spec/rails_helper.rb`
+
+Agregamos la línea `require 'rails_helper'` en `spec/spec_helper.rb`. Ahora podemos escribir nuestros tests y correrlos con `bundle exec rspec` 
