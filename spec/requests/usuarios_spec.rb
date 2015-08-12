@@ -1,5 +1,6 @@
 describe "Usuarios API" do
 
+  # index
   describe "GET /usuarios" do
     it "Devuelve todos los usuarios" do
       FactoryGirl.create :usuario_uno
@@ -27,4 +28,23 @@ describe "Usuarios API" do
     end
   end
  
+  # show
+  describe "GET /usuarios/:id" do
+    it "Devuelve el usuarios solicitado" do
+      u = FactoryGirl.create :usuario_uno
+
+      get "/usuarios/#{u.id}", {}, { "Accept" => "application/json" }
+      expect(response.status).to be 200 # OK
+
+      body = JSON.parse(response.body)
+      usuario = body['usuario']
+      expect(usuario["email"]).to eq "usuario1@correo.com"
+      expect(usuario["name"]).to eq "Usuario Uno"
+      expect(usuario["image"]).to eq "usuario1.png"
+      expect(usuario["telefono"]).to eq "3004560987"
+      expect(usuario["es_admin"]).to eq false
+      expect(usuario["es_propietario"]).to eq false
+    end
+  end
+
 end

@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
   mount_devise_token_auth_for 'Usuario', at: '/auth'
-  resources :usuarios, only: [:index], :defaults => { :format => :json }
+  resources :usuarios, only: [:index, :show], :defaults => { :format => :json }
   root 'welcome#index'
 end

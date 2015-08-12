@@ -320,3 +320,11 @@ Una vez creado el controlador solucionamos el tercer fallo y obtenemos el cuarto
 Para solucionar este creamos la acción `index` en el controlador de los usaurios.
 
 Con este último paso obtenemos el passing test y la nueva funcionalidad.
+
+## Implementa ver usuario
+
+    commit
+
+Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
+
+Luego vamos solucionando los fallos creando la ruta y la acción correspondiente.
