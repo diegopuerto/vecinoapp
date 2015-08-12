@@ -331,6 +331,14 @@ Luego vamos solucionando los fallos creando la ruta y la acción correspondiente
 
 ## Implementa eliminar usuario
 
+    commit 35dec8645226e274534360324b4d3f9488d861e8
+
+Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
+
+Luego vamos solucionando los fallos creando la ruta y la acción correspondiente.
+
+## Implementa crear usuario
+
     commit 
 
 Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.

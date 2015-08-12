@@ -59,4 +59,34 @@ describe "Usuarios API" do
     end
   end
 
+  # create
+  describe "POST /usuarios" do
+    it "Crea un usuario" do
+      parametros_usuario = {
+        "email" => "usuario@correo.com",
+        "password" => "clavesecreta",
+        "uid" => "usuario@correo.com",
+        "provider" => "email",
+        "name" => "Usuario Uno",
+        "image" => "usuario1.png",
+        "telefono" => "3004560987"
+      }.to_json
+
+      cabeceras_peticion = {
+        "Accept" => "application/json",
+        "Content-Type" => "application/json"
+      }
+
+      post "/usuarios", parametros_usuario, cabeceras_peticion
+
+      expect(response.status).to eq 201 # Created
+      expect(Usuario.first.email).to eq "usuario@correo.com"
+      expect(Usuario.first.name).to eq "Usuario Uno"
+      expect(Usuario.first.image).to eq "usuario1.png"
+      expect(Usuario.first.telefono).to eq "3004560987"
+      expect(Usuario.first.es_admin).to eq false
+      expect(Usuario.first.es_propietario).to eq false
+    end
+  end
+
 end

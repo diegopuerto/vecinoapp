@@ -19,10 +19,31 @@ class UsuariosController < ApplicationController
     head :no_content
   end
 
+  # POST /usuarios
+  def create
+    @usuario = Usuario.new(parametros_usuario)
+
+    if @usuario.save
+      render json: @usuario, status: :created
+    else
+      render json: @usuario.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
     def establecer_usuario
       @usuario = Usuario.find(params[:id])
+    end
+
+    def parametros_usuario
+      params.permit(:email,
+       :password,
+       :uid,
+       :provider,
+       :name,
+       :image,
+       :telefono)
     end
 
 
