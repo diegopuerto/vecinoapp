@@ -323,7 +323,15 @@ Con este último paso obtenemos el passing test y la nueva funcionalidad.
 
 ## Implementa ver usuario
 
-    commit
+    commit a41ab729f3b4588126a18093c93a2c73c3e8b9d2
+
+Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
+
+Luego vamos solucionando los fallos creando la ruta y la acción correspondiente.
+
+## Implementa eliminar usuario
+
+    commit 
 
 Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
 

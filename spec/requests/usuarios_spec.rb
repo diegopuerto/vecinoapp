@@ -47,4 +47,16 @@ describe "Usuarios API" do
     end
   end
 
+  # destroy
+  describe "DELETE /usuarios/:id" do
+    it "Elimina un usuario" do
+      u = FactoryGirl.create :usuario_uno
+
+      delete "/usuarios/#{u.id}", {}, { "Accept" => "application/json" }
+
+      expect(response.status).to be 204 # No Content
+      expect(Usuario.count).to eq 0
+    end
+  end
+
 end
