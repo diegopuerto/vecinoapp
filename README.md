@@ -104,7 +104,7 @@ La gema `active_model_serializers` no funciona bien si se utiliza la versión m�
 
 ## Instala y configura RSpec
 
-    commit 
+    commit 3b4ea683b4e2a40c9668230996e6945463747112
 
 [Rspec](https://en.wikipedia.org/wiki/RSpec) es un framework de [desarrollo dirigido por comportamiento](https://en.wikipedia.org/wiki/Behavior-driven_development) escrito para Ruby.
 
@@ -121,6 +121,14 @@ Este comando nos genera los archivos
   * `spec/rails_helper.rb`
 
 Agregamos la línea `require 'rails_helper'` en `spec/spec_helper.rb`. Ahora podemos escribir nuestros tests y correrlos con `bundle exec rspec` 
+
+## Instala FactoryGirl
+
+    commit 
+
+FactoryGirl es un reemplazo de los fixtures de Rails.
+
+Agregamos la gema al `Gemfile` y la instalamos.
 
 # Usuarios
 
@@ -154,7 +162,7 @@ El generador también incluye las rutas proporcionadas por `devise_token_auth` e
 
 También debería incluir los métodos de `devise_token_auth` en el controlador de la aplicación, pero como no lo hace (probablemente por usar `rails-api`), entonces lo hacemos  nosotros agregando `include DeviseTokenAuth::Concerns::SetUserByToken` al controlador `app/controllers/application_controller.rb`. De esta forma podremos a los métodos de autenticación desde los controladores de los diferentes recursos.
 
-## Migración
+### Migración
 
 En la migración generada para crear la tabla Usuarios se definen los campos de la tabla, y es allí donde vamos a incluir los campos adicionales que se requieren para el usuario y quitar los que no vamos a utilizar (sección confirmable)
 
@@ -185,11 +193,11 @@ Y podremos ver la tabla creada en la base de datos con
 
     $ sqlitebrowser db/development.sqlite3 &
 
-## Modelo
+### Modelo
 
 Al modelo Usuario generado por `devise_token_auth` le vamos desactivar el módulo de `devise` `confirmable`, esto porque no queremos que al usuario le toque confirmar su dirección de correo en el momento del registro.
 
-## Diagrama entidad relación
+### Diagrama entidad relación
 
 Como ya tenemos un modelo definido con su respectiva tabla en la base de datos, podemos generar el diagrama entidad relación de la aplicación
 
@@ -197,13 +205,13 @@ Como ya tenemos un modelo definido con su respectiva tabla en la base de datos, 
 
 Con esto se genera el archivo `erd.pdf` que podemos visualizar con `zathura erd.pdf`.
 
-## Postman
+### Postman
 
 Para verificar el funcionamiento del registro e inicio de sesión de usuarios utilizamos la aplicación [Postman](), con ella enviamos diferentes peticiones al API para crear usuarios de pruebas. Por medio de la consola validamos que los usuarios nuevos queden almacenados en la base de datos.
 
 **Esto debe reemplazarse por tests**
 
-## Heroku
+### Heroku
 
 Luego de hacer el commit nos pasamos a la rama master y hacemos merge con 01-usuarios, subimos a heroku, y como creamos un modelo nuevo, corremos las migraciones en producción
 
