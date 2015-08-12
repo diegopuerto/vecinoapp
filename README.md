@@ -110,6 +110,81 @@ Creamos una nueva rama para esta funcionalidad.
 
 ## Instala devise_token_auth
 
-    commit 
+    commit ad1e68f56b1d013539859a5b93fc5b28a42aed4c
 
 Primero agregamos las gemas `devise`, `devise_token_auth` y `omniauth` y las instalamos con `bundle update`
+
+## Implementa el recurso Usuario con devise_token_auth
+
+    commit 
+
+Generamos el código para el recurso Usuario con `devise_token_auth`
+
+    $ rails g devise_token_auth:install Usuario
+
+Esto nos crea los siguientes archivos:
+
+  * `config/initializers/devise_token_auth.rb`
+  * `db/migrate/20150812125605_devise_token_auth_create_usuarios.rb`
+  * `app/models/usuario.rb`
+
+Estos archivos son el inicializador que configura la gema `devise_token_auth`, la migración que crea la tabla Usuarios en la base de datos y la definición del modelo Usuario.
+
+El generador también incluye las rutas proporcionadas por `devise_token_auth` en `config/routes.rb`.
+
+También debería incluir los métodos de `devise_token_auth` en el controlador de la aplicación, pero como no lo hace (probablemente por usar `rails-api`), entonces lo hacemos  nosotros agregando `include DeviseTokenAuth::Concerns::SetUserByToken` al controlador `app/controllers/application_controller.rb`. De esta forma podremos a los métodos de autenticación desde los controladores de los diferentes recursos.
+
+## Migración
+
+En la migración generada para crear la tabla Usuarios se definen los campos de la tabla, y es allí donde vamos a incluir los campos adicionales que se requieren para el usuario y quitar los que no vamos a utilizar (sección confirmable)
+
+    ## Confirmable
+    # t.string   :confirmation_token
+    # t.datetime :confirmed_at
+    # t.datetime :confirmation_sent_at
+    # t.string   :unconfirmed_email # Only if using reconfirmable
+
+    ## User Info
+    t.string :name
+    t.string :nickname, :default => "vecino"
+    t.string :image
+    t.string :email
+    t.string :telefono
+    t.boolean :es_admin
+    t.boolean :es_propietario
+
+Luego de hacer las modificaciones aplicamos la migración para crear la tabla en la base de datos
+
+    $ rake db:migrate
+
+Podemos verificar que se aplicó la migración con
+
+    $ rake db:migrate:status
+
+Y podremos ver la tabla creada en la base de datos con
+
+    $ sqlitebrowser db/development.sqlite3 &
+
+## Modelo
+
+Al modelo Usuario generado por `devise_token_auth` le vamos desactivar el módulo de `devise` `confirmable`, esto porque no queremos que al usuario le toque confirmar su dirección de correo en el momento del registro.
+
+## Diagrama entidad relación
+
+Como ya tenemos un modelo definido con su respectiva tabla en la base de datos, podemos generar el diagrama entidad relación de la aplicación
+
+    $ rake erd
+
+Con esto se genera el archivo `erd.pdf` que podemos visualizar con `zathura erd.pdf`.
+
+## Postman
+
+Para verificar el funcionamiento del registro e inicio de sesión de usuarios utilizamos la aplicación [Postman](), con ella enviamos diferentes peticiones al API para crear usuarios de pruebas. Por medio de la consola validamos que los usuarios nuevos queden almacenados en la base de datos.
+
+**Esto debe reemplazarse por tests**
+
+## Heroku
+
+Luego de hacer el commit nos pasamos a la rama master y hacemos merge con 01-usuarios, subimos a heroku, y como creamos un modelo nuevo, corremos las migraciones en producción
+
+    $ heroku run rake db:migrate
