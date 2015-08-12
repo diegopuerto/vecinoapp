@@ -124,7 +124,7 @@ Agregamos la línea `require 'rails_helper'` en `spec/spec_helper.rb`. Ahora pod
 
 ## Instala FactoryGirl
 
-    commit 
+    commit 7f4624caaa7b7037901f037759737cd5b327beae
 
 FactoryGirl es un reemplazo de los fixtures de Rails.
 
@@ -144,7 +144,7 @@ Primero agregamos las gemas `devise`, `devise_token_auth` y `omniauth` y las ins
 
 ## Implementa el recurso Usuario con devise_token_auth
 
-    commit 
+    commit 839789567dd503c49100767109c3ab1eb2acd5ac
 
 Generamos el código para el recurso Usuario con `devise_token_auth`
 
@@ -205,6 +205,24 @@ Como ya tenemos un modelo definido con su respectiva tabla en la base de datos, 
 
 Con esto se genera el archivo `erd.pdf` que podemos visualizar con `zathura erd.pdf`.
 
+### Serialización
+
+Generamos un serializador para el recurso usuario
+
+    $ rails g serializer usuario
+
+Y especificamos los atributos que queremos que nos entregue el API
+
+    class UsuarioSerializer < ActiveModel::Serializer
+      attributes :id,
+             :name,
+             :email,
+             :image,
+             :telefono,
+             :es_admin,
+             :es_propietario
+    end
+
 ### Postman
 
 Para verificar el funcionamiento del registro e inicio de sesión de usuarios utilizamos la aplicación [Postman](), con ella enviamos diferentes peticiones al API para crear usuarios de pruebas. Por medio de la consola validamos que los usuarios nuevos queden almacenados en la base de datos.
@@ -216,3 +234,89 @@ Para verificar el funcionamiento del registro e inicio de sesión de usuarios ut
 Luego de hacer el commit nos pasamos a la rama master y hacemos merge con 01-usuarios, subimos a heroku, y como creamos un modelo nuevo, corremos las migraciones en producción
 
     $ heroku run rake db:migrate
+
+## Implementa lista de Usuarios - TDD
+
+    commit 
+
+### Test Driven Development
+
+Desarrollo Dirigido por Pruebas es una metodología que establece que para cada unidad de software, el desarrollador debe:
+
+  1. Definir primero un conjunto de pruebas de la unidad
+  2. Implementar la unidad
+  3. Verificar que la implementación de la unidad hace que las pruebas se pasen
+
+### API RESTful
+
+Las rutas para la gestión del recurso usuarios son:
+
+    GET    /usuarios
+    POST   /usuarios
+    GET    /usuarios/:id
+    PUT    /usuarios/:id
+    DELETE /usuarios/:id
+
+que corresponden a las acciones `index`, `create`, `show`, `update` y `destroy`.
+
+Las pruebas de estas rutas del API se basan en dos cosas, el código de estado de la respuesta HTTP y el cuerpo de la respuesta. Los códigos de estado son los siguientes:
+
+  * **200**: OK - Todo bien.
+  * **401**: Unauthorized - Credenciales de autenticación no válidas
+  * **403**: Forbidden - El recurso solicitado no se puede acceder
+  * **404**: Not Found - El recurso no existe en el servidor
+
+### Failing Test
+
+Creamos el primer test, en el cual al recibir la petición `GET /usuarios` el API devuelve una lista de los usuarios en formato JSON.
+
+    $ mkdir spec/requests/
+    $ touch spec/requests/usuarios_spec.rb
+
+Una vez escrito el test lo corremos con `bundle exec rspec` y obtenemos como resultado un fallo (`Factory not registered`).
+
+### Factory
+
+El primer fallo que se encuentra es que no se ha registrado ninguna factory para el modelo Usuario, así que la creamos
+
+    $ mkdir spec/factories
+    $ touch spec/factories/usuario_factory.rb
+
+Para poder crear las factories es necesario que en la base de datos existan las tablas, por lo que debebemos asegurarnos de correr las migraciones en el ambiente de pruebas
+
+    $ rake db:migrate RAILS_ENV=test
+
+Luego podemos acceder por consola y verificar el funcionamiento de la factory
+
+    $ rails c test
+    > FactoryGirl.create :usuario_uno
+    > Usuario.first.destroy
+
+El usuario en el ambiente de pruebas lo creamos y luego lo destruimos porque si no cuando corremos el test nos va a decir que la dirección de correo ya está en uso.
+
+### rutas
+
+Al crear la Factory solucionamos el primer fallo y obtenemos el segundo : `No route matches [GET] "/usuarios"`.
+
+Para solucionar este agregamos la ruta en `config/routes.rb`.
+
+    resources :usuarios, only: [:index], :defaults => { :format => :json }
+
+### Controlador
+
+Con las rutas solucionamos el segundo fallo y obtenemos el tercero: `uninitialized constant UsuariosController`.
+
+Este lo solucionamos creando el controlador de usuarios.
+
+    $ touch app/controllers/usuarios_controller.rb
+
+    class UsuariosController < ApplicationController
+    end
+
+### Acción
+
+Una vez creado el controlador solucionamos el tercer fallo y obtenemos el cuarto: `The action 'index' could not be found for UsuariosController`.
+
+Para solucionar este creamos la acción `index` en el controlador de los usaurios.
+
+Con este último paso obtenemos el passing test y la nueva funcionalidad.
