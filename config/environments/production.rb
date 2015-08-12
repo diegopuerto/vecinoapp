@@ -1,6 +1,21 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Mailer
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  host = 'https://vecino-api.herokuapp.com'
+  config.action_mailer.default_url_options = { host: host }
+  config.action_mailer.smtp_settings = {
+    address: "smtp.zoho.com",
+    port: 465,
+    domain: "vecino.com.co",
+    authentication: :login,
+    user_name: "noreply@vecino.com.co",
+    password: "%%.WKOU!)&qHZ,^us!gfuH&NK",
+    ssl: true,
+  }
+
   # Code is not reloaded between requests.
   config.cache_classes = true
 

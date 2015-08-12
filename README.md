@@ -130,6 +130,14 @@ FactoryGirl es un reemplazo de los fixtures de Rails.
 
 Agregamos la gema al `Gemfile` y la instalamos.
 
+## Configura Mailer
+
+    commit 39ce2efab7a49223789a5d3e38f2b843a7bee104
+
+Agregamos la configuración del servidor de correo para el mailer en `config/environments/development.rb` y `config/environments/production.rb` teniendo en cuenta los diferentes valores para el parámetro `host`.
+
+**Se debe modificar la forma de pasar el parámetro password al archivo de configuración utilizando variables de entorno para no dejar la clave escrita en un archivo que se subirá al entorno de producción.**
+
 # Usuarios
 
 Creamos una nueva rama para esta funcionalidad.
@@ -223,6 +231,17 @@ Y especificamos los atributos que queremos que nos entregue el API
              :es_propietario
     end
 
+### Mailer
+
+Para poder enviar correos con devise_token_auth la opción `config.mailer_sender` debe coincidir con el nombre de usuario en la configuración del servidor de correo electrónico.
+
+Creamos el inicializador de `devise` con 
+
+    $ rails g devise:install
+
+Y editamos la opción en el archivo `config/initializers/devise.rb`.
+
+
 ### Postman
 
 Para verificar el funcionamiento del registro e inicio de sesión de usuarios utilizamos la aplicación [Postman](), con ella enviamos diferentes peticiones al API para crear usuarios de pruebas. Por medio de la consola validamos que los usuarios nuevos queden almacenados en la base de datos.
@@ -235,9 +254,13 @@ Luego de hacer el commit nos pasamos a la rama master y hacemos merge con 01-usu
 
     $ heroku run rake db:migrate
 
+## Pendiente
+
+Escribir los tests para las acciones que provee `devise_token_auth`, es decir, registro de usuarios, sesiones, y recuperación de contraseña.
+
 ## Implementa lista de Usuarios - TDD
 
-    commit 
+    commit 579de177d66d9f7d6c1531a1378384db22b3958b
 
 ### Test Driven Development
 
@@ -347,7 +370,7 @@ Luego vamos solucionando los fallos creando la ruta y la acción correspondiente
 
 ## Implementa actualizar usuario
 
-    commit 
+    commit d5a66a1019763005ab7b34546ffdf1950c12e9bb
 
 Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
 
