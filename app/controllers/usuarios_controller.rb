@@ -1,6 +1,6 @@
 class UsuariosController < ApplicationController
 
-  before_action :establecer_usuario, only: [:show, :destroy]
+  before_action :establecer_usuario, only: [:show, :destroy, :update]
 
   # GET /usuarios
   def index
@@ -21,10 +21,19 @@ class UsuariosController < ApplicationController
 
   # POST /usuarios
   def create
-    @usuario = Usuario.new(parametros_usuario)
+    @usuario = Usuario.new(parametros_crear_usuario)
 
     if @usuario.save
       render json: @usuario, status: :created
+    else
+      render json: @usuario.errors, status: :unprocessable_entity
+    end
+  end
+
+  # PATCH/PUT /usuarios/1
+  def update
+    if @usuario.update(parametros_editar_usuario)
+      head :no_content
     else
       render json: @usuario.errors, status: :unprocessable_entity
     end
@@ -36,7 +45,7 @@ class UsuariosController < ApplicationController
       @usuario = Usuario.find(params[:id])
     end
 
-    def parametros_usuario
+    def parametros_crear_usuario
       params.permit(:email,
        :password,
        :uid,
@@ -44,6 +53,13 @@ class UsuariosController < ApplicationController
        :name,
        :image,
        :telefono)
+    end
+
+    def parametros_editar_usuario
+    	params.permit(:email,
+    		:name,
+    		:image,
+    		:telefono)
     end
 
 

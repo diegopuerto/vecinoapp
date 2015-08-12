@@ -89,4 +89,44 @@ describe "Usuarios API" do
     end
   end
 
+  # update
+  describe "PUT /usuarios/:id" do
+    it "Actualiza un usuario" do
+      u = FactoryGirl.create :usuario_uno
+
+      parametros_usuario = {
+        "email" => "otro@correo.com",
+        "password" => "nuevosecreto",
+        "name" => "usuario modificado",
+        "image" => "nueva.png",
+        "telefono" => "3001112233",
+        "es_admin" => true,
+        "es_propietario" => true
+
+      }.to_json
+
+      cabeceras_peticion = {
+        "Accept" => "application/json",
+        "Content-Type" => "application/json"
+      }
+
+      put "/usuarios/#{u.id}", parametros_usuario, cabeceras_peticion
+
+      # Solo se van a modificar cuatro parámetros desde el API RESTful
+      #  email, name, image y telefono
+      # El campo password solo lo podrá modificar el usuario por medio
+      #  de un correo de recuperación de password 
+      # El campo es_propietario lo establece el modelo al asociarse con
+      #  un recurso negocio
+      # El campo es_admin no es modificable
+      expect(response.status).to be 204 # No content
+      expect(Usuario.first.email).to eq "otro@correo.com"
+      expect(Usuario.first.name).to eq "usuario modificado"
+      expect(Usuario.first.image).to eq "nueva.png"
+      expect(Usuario.first.telefono).to eq "3001112233"
+      expect(Usuario.first.es_admin).to eq false
+      expect(Usuario.first.es_propietario).to eq false
+    end
+  end
+
 end

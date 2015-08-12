@@ -339,8 +339,18 @@ Luego vamos solucionando los fallos creando la ruta y la acción correspondiente
 
 ## Implementa crear usuario
 
+    commit 0733c45f2927eea5dc6f054b8a71f6bd15a5a7a9
+
+Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
+
+Luego vamos solucionando los fallos creando la ruta y la acción correspondiente.
+
+## Implementa actualizar usuario
+
     commit 
 
 Primero creamos el Test correspondiente a esta acción en `spec/requests/usuarios_spec.rb`.
 
 Luego vamos solucionando los fallos creando la ruta y la acción correspondiente.
+
+*So you should not write tests that look for stored passwords being equal to known values. Instead, your tests around password handling should be more black box, and assert that you can log in with the known password, and not login with any others (including code-breaking cases such as nils, empty strings, super-long passwords and a string which matches the hashed password). [so](http://stackoverflow.com/questions/16603559/rspec-the-passwords-in-my-test-are-not-matching-up)*
