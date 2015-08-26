@@ -392,7 +392,7 @@ Un usuario podrá tener ninguna, una o muchas direcciones asociadas, y las direc
 
 ## Modelo
 
-    commit
+    commit 94ae169f7f2c03deb5d3f0b3c22fd3520a3b786e
 
 Primero generamos un modelo con los atributos requeridos
 
@@ -523,3 +523,46 @@ Y especificamos los atributos que queremos que nos entregue el API.
          :detalles
 
 También especificamos la relaciones entre los recursos para que sean tomadas en cuenta a la hora de entregar el objeto JSON, en `app/serializers/direccion_serializer.rb` agregamos `belongs_to :usuario`, no ponemos nada en `app/serializers/usuarios_serializer.rb` porque no vamos a solicitar direcciones de forma independiente al API, solo vamos a interactuar con ellas a través de los usuarios, por lo que no necesitamos que al pedir una dirección, esta nos traiga el usuario al que pertenece.
+
+## API RESTful - TDD
+
+Las Direcciones son objetos que pertenecen a los usuarios y vamos a interactuar con ellas a través de los usuarios, es decir, no vamos a gestionar las direcciones de forma independiente, si no que siempre lo vamos a hacer a través de usuarios, con urls anidadas a este recurso.
+
+Si queremos crear, editar, ver o eliminar una dirección primero tenemos que determinar el usuario relacionado.
+
+### Failing Tests
+
+Escribimos los tests para cada una de las peticiones del API en `spec/requests/direcciones_spec.rb`. Inicialmente estos test fallan porque no hemos implementado ninguna acción.
+
+### Factories
+
+Para realizar las pruebas creamos dos factories de direcciones en `spec/factories/direcciones.rb`.
+
+Como las direcciones van a estar asociadas siempre a un usuario, la forma de usar estas factories en los test es diferente, ya que primero creamos un usuario y luego por medio de ese usuario creamos la dirección
+
+    u = FactoryGirl.create(:usuario_uno) do |usuario|
+        usuario.direcciones.create(FactoryGirl.attributes_for(:direccion_casa))
+        usuario.direcciones.create(FactoryGirl.attributes_for(:direccion_oficina))
+      end
+
+### Rutas
+
+Definimos las rutas del recurso en `config/routes.rb` anidándolas en las del recurso Usuarios
+
+    resources :usuarios,
+     except: [:edit, :new],
+     defaults: { format: :json } do
+
+      resources :direcciones,
+       except: [:edit, :new],
+       defaults: { format: :json }
+
+    end
+
+### Controlador
+
+Generamos el controlador para las direcciones
+
+    $ rails g controller direcciones
+
+y en él escribimos las acciones del recurso.

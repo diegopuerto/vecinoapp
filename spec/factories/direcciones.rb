@@ -1,10 +1,19 @@
 FactoryGirl.define do
-  factory :direccion do
-    nombre "MyString"
-lat 1.5
-long 1.5
-texto "MyString"
-detalles "MyText"
+  
+  factory :direccion_casa, class: Direccion do
+    nombre "casa"
+	lat 1.5
+	long 1.1
+	texto "Calle 2 2 1"
+	detalles "por la bajada"
   end
 
+  factory :direccion_oficina, class: Direccion do
+    nombre "oficina"
+	lat -21.5
+	long 4.1
+	texto "Carrera 3 2 1 of 301"
+	detalles ""
+  end
+  
 end
