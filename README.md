@@ -376,4 +376,150 @@ Primero creamos el Test correspondiente a esta acción en `spec/requests/usuario
 
 Luego vamos solucionando los fallos creando la ruta y la acción correspondiente.
 
-*So you should not write tests that look for stored passwords being equal to known values. Instead, your tests around password handling should be more black box, and assert that you can log in with the known password, and not login with any others (including code-breaking cases such as nils, empty strings, super-long passwords and a string which matches the hashed password). [so](http://stackoverflow.com/questions/16603559/rspec-the-passwords-in-my-test-are-not-matching-up)*
+*So you should not write tests that look for stored passwords being equal to known values. Instead, your tests around password handling should be more black box, and assert that you can log in with the known password, and not login with any others (including code-breaking cases such as nils, empty strings, super-long passwords and a string which matches the hashed password). [so](http://stackoverflow.com/questions/16603559/rspec-the-passwords-in-my-test-are-not-matching-up)*.
+
+# Direcciones
+
+Vamos a crear un nuevo recurso llamado **Direcciones**, que serán utilizadas por los usuarios a la hora de realizar sus pedidos para indicar fácilmente su ubicación.
+
+Un usuario podrá tener ninguna, una o muchas direcciones asociadas, y las direcciones tendrán la siguiente información:
+
+  * **nombre**: "casa"
+  * **lat**: 4.54
+  * **long**: -23.98
+  * **texto**: "carrera 4 # 21 - 56"
+  * **detalles**: "Por la calle peatonal"
+
+## Modelo
+
+    commit
+
+Primero generamos un modelo con los atributos requeridos
+
+    $ rails g model Direccion nombre:string lat:float long:float texto:string detalles:text usuario:references
+
+La parte `usuario:references` asocia las direcciones con los usuarios agregándole a la tabla una columna `usuario_id` así como un índice y una llave foránea.
+
+Al generar el modelo obtenemos los siguientes archivos 
+
+    db/migrate/20150826153620_create_direccions.rb
+    app/models/direccion.rb
+    spec/models/direccion_spec.rb
+    spec/factories/direccions.rb
+
+Se produce un error al generar la forma plurar porque no lo hace en español
+
+    > "usuario".pluralize
+     => "usuarios" 
+    > "direccion".pluralize
+     => "direccions"
+
+Para corregir esto tenemos que agregar las [reglas de pluralización para el español](https://github.com/davidcelis/inflections/blob/master/lib/inflections/es.rb) en `config/environment.rb`
+
+  ActiveSupport::Inflector.inflections do |inflect|
+    inflect.clear
+
+    inflect.plural(/$/, 's')
+    inflect.plural(/([^aeéiou])$/i, '\1es')
+    inflect.plural(/([aeiou]s)$/i, '\1')
+    inflect.plural(/z$/i, 'ces')
+    inflect.plural(/á([sn])$/i, 'a\1es')
+    inflect.plural(/é([sn])$/i, 'e\1es')
+    inflect.plural(/í([sn])$/i, 'i\1es')
+    inflect.plural(/ó([sn])$/i, 'o\1es')
+    inflect.plural(/ú([sn])$/i, 'u\1es')
+
+    inflect.singular(/s$/, '')
+    inflect.singular(/es$/, '')
+    inflect.singular(/([sfj]e)s$/, '\1')
+    inflect.singular(/ces$/, 'z')
+
+    inflect.irregular('el', 'los')
+  end
+
+Luego volvemos a generar el modelo y obtenemos los archivos con los nombres correctos.
+
+### Asociaciones
+
+Ahora editamos `app/models/direccion.rb` para agregarle las relaciones que tendrá este recurso con los otros existentes en el sistema.
+
+La primera asociación que vamos a declarar en `app/models/direccion.rb` es `belongs_to :usuario`, ya que cada dirección pertenece a un usuario.
+
+Este tipo de asociación requiere una llave foránea en la tabla direcciones que apunte a un elemento de la tabla usuarios, por lo que tenemos que modificar la migración para reflejar la asociación en las tablas agregando el campo `t.belongs_to :usuario, index: true`.
+
+Para complementar la relación entre los recursos, en `app/models/usuario.rb` declaramos la asociación `has_many :direcciones, dependent: :destroy`, la última parte la agregamos para indicarle a rails que si se elimina un usuario, se deben eliminar las direcciones asociadas a él también.
+
+### Migración
+
+A continuación revisamos la migración y agregamos las restricciones o los valores por defecto de las columnas según se requiera
+
+    class CreateDirecciones < ActiveRecord::Migration
+      def change
+        create_table :direcciones do |t|
+          t.string :nombre, null: false
+          t.float :lat, null: false
+          t.float :long, null: false
+          t.string :texto, null: false
+          t.text :detalles
+          t.belongs_to :usuario, index: true
+
+          t.timestamps null: false
+        end
+      end
+    end
+
+Luego aplicamos la migración.
+
+    $ rake db:migrate
+
+Luego de aplicar la migración podemos revisar en la consola los métodos que obtenemos por declarar las relaciones entre los recursos
+
+    > d = Direccion.new
+    > d.usuario = Usuario.first
+    > d.nombre = "casa"
+    > d.lat = 10
+    > d.long = -3
+    > d.texto = "carrera 3 4 3"
+    > d.save
+    > u = Usuario.first
+    > u.direcciones
+    > u.direcciones.first
+    > d == u.direcciones.first
+
+### Diagrama Entidad Relación
+
+Para tener una perspectiva gráfica de las relaciones entre los recursos del sistema, generamos un diagrama entidad relación.
+
+    $ rake erd
+
+### Test Unitarios
+
+**Pediente realizar test unitarios con rspec**
+
+### Validaciones
+
+Agregamos al modelo las validaciones requeridas por la lógica del negocio y la integridad de la información.
+
+    # Validaciones
+    validates_presence_of :nombre, :lat, :long, :texto, :usuario_id
+    validates :lat, numericality: { greater_than_or_equal_to: -90,
+                                    less_than_or_equal_to: 90 }
+    validates :long, numericality: { greater_than_or_equal_to: -180,
+                                     less_than_or_equal_to: 180 }
+
+### Serialización
+
+Generamos un serializador para el recurso 
+
+    $ rails g serializer direccion
+
+Y especificamos los atributos que queremos que nos entregue el API. 
+
+    attributes :id,
+         :nombre,
+         :lat,
+         :long,
+         :texto,
+         :detalles
+
+También especificamos la relaciones entre los recursos para que sean tomadas en cuenta a la hora de entregar el objeto JSON, en `app/serializers/direccion_serializer.rb` agregamos `belongs_to :usuario`, no ponemos nada en `app/serializers/usuarios_serializer.rb` porque no vamos a solicitar direcciones de forma independiente al API, solo vamos a interactuar con ellas a través de los usuarios, por lo que no necesitamos que al pedir una dirección, esta nos traiga el usuario al que pertenece.

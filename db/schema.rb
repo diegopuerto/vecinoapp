@@ -11,7 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150812125605) do
+ActiveRecord::Schema.define(version: 20150826160454) do
+
+  create_table "direcciones", force: :cascade do |t|
+    t.string   "nombre",     null: false
+    t.float    "lat",        null: false
+    t.float    "long",       null: false
+    t.string   "texto",      null: false
+    t.text     "detalles"
+    t.integer  "usuario_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "direcciones", ["usuario_id"], name: "index_direcciones_on_usuario_id"
 
   create_table "usuarios", force: :cascade do |t|
     t.string   "provider",                                  null: false

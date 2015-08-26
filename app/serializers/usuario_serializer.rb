@@ -6,4 +6,5 @@ class UsuarioSerializer < ActiveModel::Serializer
   			 :telefono,
   			 :es_admin,
   			 :es_propietario
+  has_many :direcciones
 end

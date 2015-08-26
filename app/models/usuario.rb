@@ -4,4 +4,8 @@ class Usuario < ActiveRecord::Base
           :recoverable, :rememberable, :trackable, :validatable, 
           :omniauthable
   include DeviseTokenAuth::Concerns::User
+
+  # Asociaciones
+  has_many :direcciones, dependent: :destroy
+
 end
