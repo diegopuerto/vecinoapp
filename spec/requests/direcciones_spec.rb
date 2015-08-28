@@ -50,7 +50,7 @@ describe "Direcciones API" do
     end
   end
 
-  # destroy
+  # destroy anidada en usuario
   describe "DELETE /usuarios/:id/direcciones/:id" do
     it "Elimina una dirección del usuario con id :id" do
       u = FactoryGirl.create(:usuario_uno) do |usuario|
@@ -60,6 +60,22 @@ describe "Direcciones API" do
       d = u.direcciones.first
 
       delete "/usuarios/#{u.id}/direcciones/#{d.id}", {}, { "Accept" => "application/json" }
+
+      expect(response.status).to be 204 # No Content
+      expect(Direccion.count).to eq 0
+    end
+  end
+
+  # destroy
+  describe "DELETE /direcciones/:id" do
+    it "Elimina una dirección de un usuario" do
+      u = FactoryGirl.create(:usuario_uno) do |usuario|
+        usuario.direcciones.create(FactoryGirl.attributes_for(:direccion_casa))
+      end
+
+      d =  u.direcciones.first
+
+      delete "/direcciones/#{d.id}", {}, { "Accept" => "application/json" }
 
       expect(response.status).to be 204 # No Content
       expect(Direccion.count).to eq 0

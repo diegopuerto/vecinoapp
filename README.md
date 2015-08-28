@@ -566,3 +566,29 @@ Generamos el controlador para las direcciones
     $ rails g controller direcciones
 
 y en él escribimos las acciones del recurso.
+
+## BUG FIX - No se puede eliminar dirección
+
+    commit
+
+Se agrega la ruta DELETE para el recurso dirección en `config/routes.rb`
+
+    resources :direcciones, only: [:destroy], defaults: { format: :json }
+
+También se agrega test en `spec/requests/direcciones_spec.rb`
+
+    # destroy
+    describe "DELETE /direcciones/:id" do
+      it "Elimina una dirección de un usuario" do
+        u = FactoryGirl.create(:usuario_uno) do |usuario|
+          usuario.direcciones.create(FactoryGirl.attributes_for(:direccion_casa))
+        end
+
+        d =  u.direcciones.first
+
+        delete "/direcciones/#{d.id}", {}, { "Accept" => "application/json" }
+
+        expect(response.status).to be 204 # No Content
+        expect(Direccion.count).to eq 0
+      end
+    end

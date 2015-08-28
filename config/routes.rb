@@ -10,7 +10,9 @@ Rails.application.routes.draw do
    	 except: [:edit, :new],
    	 defaults: { format: :json }
   
-  end  
+  end
+
+  resources :direcciones, only: [:destroy], defaults: { format: :json }
   
   root 'welcome#index'
 end
