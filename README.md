@@ -569,9 +569,9 @@ y en él escribimos las acciones del recurso.
 
 ## BUG FIX - No se puede eliminar dirección
 
-    commit
+    commit 43d16deb8627cec9631a29f8246641ee451c5d80
 
-Se agrega la ruta DELETE para el recurso dirección en `config/routes.rb`
+Se agrega la ruta para DELETE en el recurso dirección en `config/routes.rb`
 
     resources :direcciones, only: [:destroy], defaults: { format: :json }
 
@@ -592,3 +592,13 @@ También se agrega test en `spec/requests/direcciones_spec.rb`
         expect(Direccion.count).to eq 0
       end
     end
+
+## BUG FIX - No se puede editar dirección
+
+    commit 
+
+Se agrega la ruta para PATCH en el recurso dirección en `config/routes.rb`
+
+    resources :direcciones, only: [:destroy, :update], defaults: { format: :json }
+
+También se agrega test en `spec/requests/direcciones_spec.rb`

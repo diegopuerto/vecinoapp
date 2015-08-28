@@ -125,7 +125,7 @@ describe "Direcciones API" do
     end
   end
 
-  # update
+  # update anidada en usuario
   describe "PUT /usuarios/:id/direcciones/:id" do
     it "Actualiza una direccion del usuario con id :id" do
       u = FactoryGirl.create(:usuario_uno) do |usuario|
@@ -148,6 +148,39 @@ describe "Direcciones API" do
       }
 
       put "/usuarios/#{u.id}/direcciones/#{d.id}", parametros_direccion, cabeceras_peticion
+
+      expect(response.status).to be 204 # No content
+      expect(Direccion.first.nombre).to eq "casa nueva"
+      expect(Direccion.first.lat).to eq 22
+      expect(Direccion.first.long).to eq -43
+      expect(Direccion.first.texto).to eq "carrera 4 2 1"
+      expect(Direccion.first.detalles).to eq "la casa grande"
+    end
+  end
+
+  # update 
+  describe "PUT /direcciones/:id" do
+    it "Actualiza una direccion" do
+      u = FactoryGirl.create(:usuario_uno) do |usuario|
+        usuario.direcciones.create(FactoryGirl.attributes_for(:direccion_casa))
+      end
+
+      d = u.direcciones.first
+      
+      parametros_direccion = {
+        "nombre" => "casa nueva",
+        "lat" => 22,
+        "long" => -43,
+        "texto" => "carrera 4 2 1",
+        "detalles" => "la casa grande",
+      }.to_json
+
+      cabeceras_peticion = {
+        "Accept" => "application/json",
+        "Content-Type" => "application/json"
+      }
+
+      put "/direcciones/#{d.id}", parametros_direccion, cabeceras_peticion
 
       expect(response.status).to be 204 # No content
       expect(Direccion.first.nombre).to eq "casa nueva"
