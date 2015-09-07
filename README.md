@@ -632,7 +632,7 @@ Para cada negocio se va a guardar la siguiente información
 
 ## Modelo
 
-    commit 
+    commit d78276482ef8257264e8b1c141ea277de9e2a54b
 
 Primero generamos un modelo con los atributos requeridos
 
@@ -872,4 +872,33 @@ Como no queremos que exista ningún negocio sin un propietario, agregamos un cal
           end
         end
       end      
+    end
+
+## Remueve asociación `has_and_belongs_to_many` entre Negocios y Usuarios
+
+    commit
+
+Inicialmente se pensó que esta era la mejor forma de modelar la relación entre estos recursos, pero a la hora de implementar la interfaz API se encontró la necesidad de intearctuar directamente con el modelo de la asociación, el cual no existe en las asociaciones `has_and_belongs_to_many`.
+
+Vamos a remover el código que establece esta relación en los modelos y los tests, dejando el recurso Negocio funcional, pero sin ninguna relación con el recurso Usuario.
+
+Luego generamos una migración que elimine en la base de datos la tabla utilizada por la asociación
+
+    $ rails g migration DropNegociosPropiosPropietariosTable
+
+Editamos el archivo para definir la migración y el rollback.
+
+    def up
+      drop_table :negocios_propios_propietarios
+    end
+
+    def down
+      create_join_table :propietarios, :negocios_propios do |t|
+        t.integer :propietario_id
+        t.integer :negocio_propio_id
+
+        t.index :negocio_propio_id
+        t.index :propietario_id
+        t.index [:propietario_id, :negocio_propio_id], unique: true, name: 'by_negocio_propietario'
+      end
     end

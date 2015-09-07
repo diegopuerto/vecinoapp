@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150901195312) do
+ActiveRecord::Schema.define(version: 20150907225916) do
 
   create_table "direcciones", force: :cascade do |t|
     t.string   "nombre",     null: false
@@ -45,15 +45,6 @@ ActiveRecord::Schema.define(version: 20150901195312) do
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
   end
-
-  create_table "negocios_propios_propietarios", id: false, force: :cascade do |t|
-    t.integer "propietario_id"
-    t.integer "negocio_propio_id"
-  end
-
-  add_index "negocios_propios_propietarios", ["negocio_propio_id"], name: "index_negocios_propios_propietarios_on_negocio_propio_id"
-  add_index "negocios_propios_propietarios", ["propietario_id", "negocio_propio_id"], name: "by_negocio_propietario", unique: true
-  add_index "negocios_propios_propietarios", ["propietario_id"], name: "index_negocios_propios_propietarios_on_propietario_id"
 
   create_table "usuarios", force: :cascade do |t|
     t.string   "provider",                                  null: false

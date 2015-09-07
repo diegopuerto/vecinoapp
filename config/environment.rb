@@ -23,7 +23,4 @@ ActiveSupport::Inflector.inflections do |inflect|
   inflect.singular(/ces$/, 'z')
 
   inflect.irregular('el', 'los')
-
-  inflect.irregular 'negocio_propio', 'negocios_propios'
-  inflect.irregular 'NegocioPropio', 'NegociosPropios'
 end

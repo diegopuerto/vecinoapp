@@ -2,9 +2,8 @@ require 'rails_helper'
 
 RSpec.describe Negocio, type: :model do
 
-  it "es válido con todos sus datos y al menos un propietario" do
-		@propietario = FactoryGirl.create(:usuario_uno)
-		@tienda = FactoryGirl.build(:tienda, propietarios: [@propietario])
+  it "es válido con todos sus datos" do
+		@tienda = FactoryGirl.build(:tienda)
 		expect(@tienda).to be_valid
   end
 
@@ -64,12 +63,12 @@ RSpec.describe Negocio, type: :model do
 	  	expect(@tienda.errors[:hora_cierre]).to include("can't be blank")
 	  end
 
-	  it "es inválido sin propietarios" do
-	  	@tienda = FactoryGirl.build(:tienda)
-	  	expect(@tienda.propietarios.empty?).to be true
-	  	@tienda.valid?
-	  	expect(@tienda.errors[:propietarios]).to include("can't be blank")
-	  end
+#	  it "es inválido sin propietarios" do
+#	  	@tienda = FactoryGirl.build(:tienda)
+#	  	expect(@tienda.propietarios.empty?).to be true
+#	  	@tienda.valid?
+#	  	expect(@tienda.errors[:propietarios]).to include("can't be blank")
+#	  end
 
   end
 
@@ -167,6 +166,7 @@ RSpec.describe Negocio, type: :model do
   	end
   end
 
+=begin
   describe "Comportamiento" do
 
   	before :each do
@@ -221,5 +221,6 @@ RSpec.describe Negocio, type: :model do
   	end
 
   end
-  
+=end
+
 end
