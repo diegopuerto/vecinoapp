@@ -595,10 +595,281 @@ También se agrega test en `spec/requests/direcciones_spec.rb`
 
 ## BUG FIX - No se puede editar dirección
 
-    commit 
+    commit 5b3d7cf82971f9b798b7c49b9e248337e0cf3907
 
 Se agrega la ruta para PATCH en el recurso dirección en `config/routes.rb`
 
     resources :direcciones, only: [:destroy, :update], defaults: { format: :json }
 
 También se agrega test en `spec/requests/direcciones_spec.rb`
+
+# Negocios
+
+Vamos a crear un nuevo recurso llamado **Negocios**, cada negocio estará asociado a uno o más usuarios (propietarios) y cada usuario podrá estar asociado a cero, uno o más negocios (negocios propios).
+
+La asociación del negocio con el usuario propietario se hace al momento de crear el negocio y se recibe como parámetro el id del usuario, luego de realizar la asociación se debe actualizar el atributo `es_propietario` del usuario asociado al negocio.
+
+Después de crear el negocio se le pueden agregar o quitar propietarios. Si el negocio tiene un propietario único, este usuario no se puede eliminar. Luego de eliminar una asociación, si es necesario, se debe actualizar el parámetro `es_propietario` del usuario cuya asociación se eliminó.
+
+Para cada negocio se va a guardar la siguiente información 
+
+  * **nombre**: Tienda Michel
+  * **direccion**: carrera 4 # 21 - 56
+  * **latitud**: 4.54
+  * **longitud**: -23.98
+  * **reputacion**: 5000 puntos
+  * **tiempo_entrega**: 15 minutos
+  * **pedido_mínimo**: $5000
+  * **tipo**: tienda o papelería o droguería, etc
+  * **cobertura**: 3000 metros a la redonda
+  * **telefono**: 5542312
+  * **imagen**: logo.png
+  * **activo**: true
+  * **hora_cierre**: 11:00 pm
+  * **hora_apertura**: 06:00 am
+
+*Se debe determinar si el negocio está **abierto** o **cerrado** a partir de los atributos `hora_cierre` y `hora_apertura`. Una opción es implementar una tarea programada (gema whenever) que revise estos atributos cada 30 min y actualice el estado del negocio, pero no parece ser la más óptima. Por ahora se va a hacer la validación en el frontend agregándole un método al modelo Restmod*
+
+## Modelo
+
+    commit 
+
+Primero generamos un modelo con los atributos requeridos
+
+    $ rails g model Negocio \
+    > nombre:string \
+    > direccion:string \
+    > latitud:float \
+    > longitud:float \
+    > reputacion:integer \
+    > tiempo_entrega:integer \
+    > pedido_minimo:decimal \
+    > recargo:decimal \
+    > tipo:integer \
+    > cobertura:integer \
+    > telefono:string \
+    > imagen:string \
+    > activo:boolean \
+    > hora_apertura:time \
+    > hora_cierre:time
+
+Con latitud y longitud usamos float porque estos son números decimales con precisión fija. No son los más exactos, pero su procesamiento es rápido. Suficiente para guardar las coordenadas de geolocalización.
+
+En la reputación utilizamos integer porque este será un número entero (330 puntos)
+
+El tiempo de entrega también es de tipo integer y almacena el número máximo de minutos que se demora un pedido en ser entregado.
+
+El pedido mínimo y el recargo son de tipo decimal porque este valor está relacionado con dinero, por lo que se requiere exactitud. Para el caso particular podemos especificar que se trate de un decimal con ninguna cifra después de la coma.
+
+El tipo es integer porque vamos a utilizar este campo como un atributo [enum](http://edgeapi.rubyonrails.org/classes/ActiveRecord/Enum.html)
+
+La cobertura también es un entero porque hace referencia a la distancia máxima en metros para la entrega de pedidos del negocio.
+
+El telefono es de tipo string porque los números telefónicos son [cadenas de dígitos](http://stackoverflow.com/questions/23637057/why-is-it-best-to-store-a-telephone-number-as-a-string-vs-integer)
+
+La imagen también es de tipo string porque almacena identificadores o rutas al archivo imagen.
+
+Activo es de tipo boolean y las horas de cierre y apertura son de tipo Time ya que solo almacenan horas, minutos y segundos. - [SO](http://stackoverflow.com/questions/11889048/is-there-documentation-for-the-rails-column-types).
+
+Al generar el modelo obtenemos los siguientes archivos:
+
+    db/migrate/20150901165608_create_negocios.rb
+    app/models/negocio.rb
+    spec/models/negocio_spec.rb
+    spec/factories/negocios.rb
+
+En ellos vamos a terminar de configurar nuestro modelo.
+
+Primero establecemos los valores para el atributo tipo en `app/models/negocio.rb`
+
+    # Tipo
+    enum tipo: [:tienda, :drogueria, :papeleria]    
+
+### Asociaciones
+
+El modelo Negocio va a estar asociado por una relación muchos-a-muchos con el modelo Usuario.
+
+En Rails este tipo de asociaciones se pueden declarar de dos maneras: con `has_and_belongs_to_many` y con `has_many :through`. Como en esta ocasión no vamos a agregarle atributos a la relación utilizamos `has_and_belongs_to_many`.
+
+Si necesitáramos realizar validaciones sobre el modelo de la relación o agregarle atributos, tendríamos que utilizar `has_many :trough` - [Rails Guides](http://guides.rubyonrails.org/association_basics.html#choosing-between-has-many-through-and-has-and-belongs-to-many). 
+
+Declaramos las asociaciones en los modelos Usuario y Negocio.
+
+Cuando se crea una asociación Rails asume que el modelo de la asociación corresponde al nombre de la asociación, y que la llave foránea en cualquier relación `belongs_to` será `nombredelaasociacion_id` - [Odin Project](http://www.theodinproject.com/ruby-on-rails/active-record-associations). Como vamos a declarar las asociaciones con un nombre diferente al de los modelos para leer mejor el código, tenemos que indicar a qué modelo hacemos referencia, la tabla de unión que vamos a utilizar y las llaves foráneas.
+
+En `app/models/negocio.rb`:
+
+    has_and_belongs_to_many :propietarios,
+     class_name: 'Usuario',
+     join_table: 'negocios_propios_propietarios',
+     foreign_key: 'negocio_propio_id',
+     association_foreign_key: 'propietario_id',
+     after_add: :actualizar_propietario,
+     after_remove: :actualizar_propietario      
+
+y en `app/models/usuario.rb`
+
+    has_and_belongs_to_many :negocios_propios,
+     class_name: 'Negocio',
+     join_table: 'negocios_propios_propietarios',
+     foreign_key: 'propietario_id',
+     association_foreign_key: 'negocio_propio_id'
+
+Como estamos usando una relación llamada `negocio_propio` tenemos que especificar su regla de pluralización en `config/environment.rb` para que los nombres de los elementos se generen de forma correcta.
+
+    inflect.irregular 'negocio_propio', 'negocios_propios'
+    inflect.irregular 'NegocioPropio', 'NegociosPropios'
+
+La asociación `has_and_belongs_to_many` necesita una tabla de unión en la base de datos, por lo que debemos generar una migración para crearla [rails guides](http://guides.rubyonrails.org/association_basics.html#updating-the-schema).
+
+    $ rails g migration CreateJoinTable propietarios negocios_propios
+
+El nombre de esta tabla se forma al unir los nombres de los elementos teniendo en cuenta el orden léxico de las palabras. Esta tabla se llamará `negocios_propios_propietarios` porque `"negocios_propios" < "propietarios" == true`
+
+Editamos el archivo generado:
+
+    class CreateJoinTable < ActiveRecord::Migration
+      def change
+        create_join_table :propietarios, :negocios_propios do |t|
+          t.integer :propietario_id
+          t.integer :negocios_propio_id
+
+          t.index :negocios_propio_id
+          t.index :propietario_id
+          t.index [:propietario_id, :negocio_propio_id], unique: true, name: 'by_negocio_propietario'
+        end
+      end
+    end
+
+En el índice múltiple especificamos un nombre porque el nombre generado por rails es muy largo.
+
+### Migración
+
+A continuación revisamos la migración del modelo Negocio y agregamos las restricciones o los valores por defecto de las columnas según se requiera
+
+    class CreateNegocios < ActiveRecord::Migration
+      def change
+        create_table :negocios do |t|
+          t.string :nombre, null: false
+          t.string :direccion, null: false
+          t.float :latitud, null: false
+          t.float :longitud, null: false
+          t.integer :reputacion, default: 0
+          t.integer :tiempo_entrega, default: 15
+          t.decimal :pedido_minimo, default: 0
+          t.decimal :recargo, default: 0
+          t.integer :tipo, default: 0
+          t.integer :cobertura, null: false
+          t.string :telefono, null: false
+          t.string :imagen
+          t.boolean :activo, default: false
+          t.time :hora_apertura, null: false
+          t.time :hora_cierre, null: false
+
+          t.timestamps null: false
+        end
+      end
+    end
+
+Luego aplicamos las migraciones generadas.
+
+    $ rake db:migrate
+
+Luego de aplicar la migración podemos revisar en la consola los métodos que obtenemos por declarar las relaciones entre los recursos
+
+    > # Crear Negocio
+    > n = Negocio.new
+    > n.nombre = "Primera Tienda"
+    > n.direccion = "calle 3 2 1"
+    > n.latitud = 3
+    > n.longitud = 2
+    > n.cobertura = 1000
+    > n.telefono = 3334433
+    > n.hora_apertura = Time.now
+    n.hora_cierre = Time.now + 8.hours
+    > n.save
+
+    > # Asignar Propietarios
+    > n.propietarios << Usuario.first
+    > n.propietarios << Usuario.last
+    > n.propietarios.count
+
+    > # Quitar propietarios
+    > n.propietarios.destroy(Usuario.first)
+    > n.propietarios.count
+
+    > # Propietarios
+    > u = Usuario.last
+    > u.negocios_propios.first == n
+    >  u.negocio_propio_ids
+
+### Diagrama Entidad Relación
+
+Para tener una perspectiva gráfica de las relaciones entre los recursos del sistema, generamos un diagrama entidad relación.
+
+    $ rake erd
+
+### TDD - Test Unitarios
+
+Antes de escribir los tests creamos las factories de negocios en `spec/factories/negocios.rb`.
+
+Luego implementamos los test del modelo en `spec/models/negocio_spec.rb` teniendo en cuenta la lógica del negocio y la integridad de la información
+
+#### Validaciones
+
+Agregamos al modelo las validaciones requeridas para pasar los test unitarios.
+
+    # Validaciones
+    validates_presence_of :nombre, :direccion, :latitud, :longitud,
+     :tiempo_entrega, :cobertura, :telefono, :hora_apertura, :hora_cierre,
+     :propietarios
+    validates :nombre, length: { maximum: 50 }
+    validates :direccion, length: { maximum: 255 }
+    validates :latitud,
+     numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
+    validates :longitud,
+     numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+    validates :reputacion,
+     numericality: { greater_than_or_equal_to: 0, only_integer: true }
+    validates :tiempo_entrega,
+     inclusion: { in: [15, 30, 45, 60, 75, 90, 105, 120] }
+    validates :pedido_minimo,
+     numericality: { greater_than_or_equal_to: 0, only_integer: true }
+    validates :recargo,
+     numericality: { greater_than_or_equal_to: 0, only_integer: true }
+    validates :cobertura,
+     numericality: { greater_than_or_equal_to: 0, only_integer: true }
+    validate :horario_positivo
+
+#### Callbacks
+
+Se requiere que se actualice el atributo `es_propietario` del usuario dependiendo de si tiene o no negocios propios, para esto creamos un callback llamado `actualizar_propietario` y lo llamamos antes de crear una asociación y después de quitarla (hay unos métodos que no llaman los callbacks, como collection.clear).
+
+    after_add: :actualizar_propietario,
+    after_remove: :actualizar_propietario
+
+    def actualizar_propietario(propietario)
+      propietario.es_propietario = !propietario.negocios_propios.empty?
+      propietario.save
+    end
+
+Cuando se llama el callback Rails pasa el objeto que se agrega o se quita - [Rails Guides](http://guides.rubyonrails.org/association_basics.html#has-and-belongs-to-many-association-reference).
+
+Como no queremos que exista ningún negocio sin un propietario, agregamos un callback a la clase Usuario para que antes de eliminar el usuario se verifique que no va a quedar ningún negocio sin propietario.
+
+    before_destroy :que_no_sea_propietario_unico
+
+    def que_no_sea_propietario_unico
+      if self.negocios_propios.empty?
+        return true
+      else
+        self.negocios_propios.each do |n|
+          if n.propietarios.count > 1
+            return true
+          else
+            errors.add(:base, 'propietario único, primero borre los negocios propios')
+          return false
+          end
+        end
+      end      
+    end

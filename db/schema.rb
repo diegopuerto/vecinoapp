@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150826160454) do
+ActiveRecord::Schema.define(version: 20150901195312) do
 
   create_table "direcciones", force: :cascade do |t|
     t.string   "nombre",     null: false
@@ -25,6 +25,35 @@ ActiveRecord::Schema.define(version: 20150826160454) do
   end
 
   add_index "direcciones", ["usuario_id"], name: "index_direcciones_on_usuario_id"
+
+  create_table "negocios", force: :cascade do |t|
+    t.string   "nombre",                         null: false
+    t.string   "direccion",                      null: false
+    t.float    "latitud",                        null: false
+    t.float    "longitud",                       null: false
+    t.integer  "reputacion",     default: 0
+    t.integer  "tiempo_entrega", default: 15
+    t.decimal  "pedido_minimo",  default: 0.0
+    t.decimal  "recargo",        default: 0.0
+    t.integer  "tipo",           default: 0
+    t.integer  "cobertura",                      null: false
+    t.string   "telefono",                       null: false
+    t.string   "imagen"
+    t.boolean  "activo",         default: false
+    t.time     "hora_apertura",                  null: false
+    t.time     "hora_cierre",                    null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  create_table "negocios_propios_propietarios", id: false, force: :cascade do |t|
+    t.integer "propietario_id"
+    t.integer "negocio_propio_id"
+  end
+
+  add_index "negocios_propios_propietarios", ["negocio_propio_id"], name: "index_negocios_propios_propietarios_on_negocio_propio_id"
+  add_index "negocios_propios_propietarios", ["propietario_id", "negocio_propio_id"], name: "by_negocio_propietario", unique: true
+  add_index "negocios_propios_propietarios", ["propietario_id"], name: "index_negocios_propios_propietarios_on_propietario_id"
 
   create_table "usuarios", force: :cascade do |t|
     t.string   "provider",                                  null: false
