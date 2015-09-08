@@ -876,7 +876,7 @@ Como no queremos que exista ningún negocio sin un propietario, agregamos un cal
 
 ## Remueve asociación `has_and_belongs_to_many` entre Negocios y Usuarios
 
-    commit
+    commit d16ecd43b8c910792b5215497d5b6f904897a1d0
 
 Inicialmente se pensó que esta era la mejor forma de modelar la relación entre estos recursos, pero a la hora de implementar la interfaz API se encontró la necesidad de intearctuar directamente con el modelo de la asociación, el cual no existe en las asociaciones `has_and_belongs_to_many`.
 
@@ -902,3 +902,46 @@ Editamos el archivo para definir la migración y el rollback.
         t.index [:propietario_id, :negocio_propio_id], unique: true, name: 'by_negocio_propietario'
       end
     end
+
+## API RESTful - TDD
+
+    commit 
+
+### Failing Tests
+
+Escribimos los tests para cada una de las peticiones del API en `spec/requests/negocios_spec.rb`. Inicialmente estos test fallan porque no hemos implementado ninguna acción.
+
+    $ touch spec/requests/negocios_spec.rb
+
+### Rutas
+
+Definimos las rutas del recurso en `config/routes.rb`.
+
+### Controlador
+
+Generamos el controlador para las direcciones
+
+    $ rails g controller negocios
+
+y en él escribimos las acciones del recurso.
+
+### Serializador
+
+Generamos el serializador que se va a encargar de convertir en JSON los objetos que queramos enviar a través del API.
+
+    $ rails g serializer Negocio
+
+A los atributos `hora_cierre`, `hora_apertura`, `recargo` y `pedido_minimo` les modificamos el formato para que coincidiera con las necesidades del frontend.
+
+## Localización
+
+Configuramos la zona horaria y el idioma en `config/application.rb`
+
+    config.time_zone = 'Bogota'
+    config.i18n.default_locale = :es
+
+Para esto tenemos que agregar el archivo con los textos en español `config/locales/es.yml` y en lugar de utilizar cadenas fijas, utilizamos las traducciones con `I18n.t`
+
+    I18n.t 'errors.messages.open_before_close'
+
+

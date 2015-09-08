@@ -13,6 +13,10 @@ Rails.application.routes.draw do
   end
 
   resources :direcciones, only: [:destroy, :update], defaults: { format: :json }
+
+  resources :negocios,
+   except: [:edit, :new],
+   defaults: { format: :json }
   
   root 'welcome#index'
 end

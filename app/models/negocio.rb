@@ -30,8 +30,8 @@ class Negocio < ActiveRecord::Base
     def horario_positivo
       if self.hora_cierre && self.hora_apertura
       	unless self.hora_cierre > self.hora_apertura
-	      	errors.add(:hora_apertura, "Debe cerrar después de abrir")
-	      	errors.add(:hora_cierre, "Debe cerrar después de abrir")
+	      	errors.add(:hora_apertura, (I18n.t 'errors.messages.open_before_close'))
+	      	errors.add(:hora_cierre, (I18n.t 'errors.messages.open_before_close'))
 	   		 end
 	  	end
     end
