@@ -990,4 +990,7 @@ Ahora creamos la interfaz para agregar usuarios como propietarios a un negocio, 
 
 Empezamos escribiendo los test de las peticiones, y vamos agregando las rutas y acciones hasta pasarlos.
 
-    $ touch spec/requests/propietarios_negocios_spec.rbProbandow workflow
+    $ touch spec/requests/propietarios_negocios_spec.rbProbandow workflow 
+
+
+prueba
