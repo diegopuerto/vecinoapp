@@ -3,9 +3,16 @@ class UsuariosController < ApplicationController
   before_action :establecer_usuario, only: [:show, :destroy, :update]
 
   # GET /usuarios
+  # GET /negocios/:negocio_id/propietarios
   def index
-    @usuarios = Usuario.all
-    render json: @usuarios
+    if params[:negocio_propio]
+      render json: Negocio.find(params[:negocio_id]).propietarios,
+        root: 'propietarios',
+        each_serializer: PropietarioSerializer
+    else
+      @usuarios = Usuario.all
+      render json: @usuarios
+    end
   end
 
   # GET /usuarios/1
@@ -14,19 +21,37 @@ class UsuariosController < ApplicationController
   end
 
   # DELETE /usuarios/1
+  # DELETE /negocios/:negocio_id/propietarios/:id
   def destroy
-    @usuario.destroy
-    head :no_content
+    if params[:negocio_propio]
+      @negocio_propio = Negocio.find(params[:negocio_id])
+      @negocio_propio.propietarios.destroy(@usuario)
+      head :no_content
+    else
+      @usuario.destroy
+      head :no_content
+    end
   end
 
   # POST /usuarios
+  # POST /negocios/:negocio_id/propietarios
   def create
-    @usuario = Usuario.new(parametros_crear_usuario)
-
-    if @usuario.save
-      render json: @usuario, status: :created
+    if params[:negocio_propio]
+      @propietario = Usuario.find(params[:usuario_id])
+      @negocio_propio = Negocio.find(params[:negocio_id])
+      if @negocio_propio.propietarios << @propietario
+        render json: @negocio_propio.propietarios, status: :created
+      else
+        render json: @negocio_propio.propietarios.errors, status: :unprocessable_entity
+      end
     else
-      render json: @usuario.errors, status: :unprocessable_entity
+      @usuario = Usuario.new(parametros_crear_usuario)
+
+      if @usuario.save
+        render json: @usuario, status: :created
+      else
+        render json: @usuario.errors, status: :unprocessable_entity
+      end 
     end
   end
 
@@ -61,6 +86,5 @@ class UsuariosController < ApplicationController
     		:image,
     		:telefono)
     end
-
 
 end

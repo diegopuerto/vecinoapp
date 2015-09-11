@@ -13,7 +13,7 @@ FactoryGirl.define do
 		cobertura 1000
 		telefono "4432211"
 		imagen "imagen.png"
-		activo true
+		activo false
 		hora_apertura "05:56 AM"
 		hora_cierre "11:56 PM"
   end

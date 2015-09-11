@@ -905,7 +905,7 @@ Editamos el archivo para definir la migración y el rollback.
 
 ## API RESTful - TDD
 
-    commit 
+    commit 24e853e63e4f354bfe6905668b7bf213b10ea57a
 
 ### Failing Tests
 
@@ -944,4 +944,50 @@ Para esto tenemos que agregar el archivo con los textos en español `config/loca
 
     I18n.t 'errors.messages.open_before_close'
 
+## Asociación `many to many` entre Negocios y Usuarios
 
+    commit
+
+Vamos a crear una relación `many to many` entre el modelo Usuario y el modelo Negocio utilizando la asociación `has_many :through`.
+
+Esta asociación se va a hacer utilizando el modelo PropietarioNegocio.
+
+Primero creamos el modelo de la asociación (tenemos que agregar la regla de pluralización para PropietarioNegocio)
+
+    $ rails g model PropietarioNegocio usuario:references negocio:references
+
+Esto nos genera el modelo con las respectivas asociaciones `belongs_to`, la factory, el spec del modelo y la migración.
+
+Editamos la migración para asegurarnos que no las asociaciones sean únicas y la aplicamos.
+
+    t.index [:usuario_id, :negocio_id], unique: true
+
+Luego declaramos la asociación en los modelos.
+
+En el modelo Usuario
+
+    has_many :propietarios_negocios
+    has_many :negocios_propios, through: :propietarios_negocios,
+      source: :negocio
+
+En el modelo Negocio
+
+    has_many :propietarios_negocios
+    has_many :propietarios, through: :propietarios_negocios,
+      source: :usuario
+
+Como en el modelo de la asociación estamos haciendo referencia a Usuarios y Negocios, y en los modelos Negocio y Usuario hacemos referencia a propietarios y negocios propios, tenemos que definir de forma explícita el origen de la asociación para cada modelo utilizando la opción `source`.
+
+### Test Unitarios - TDD
+
+Ahora vamos a crear los tests relacionados con esta asociación. Estos tests son los test unitarios de la asociación más los test unitarios de los modelos Usuario y Negocio que se requieran.
+
+Anteriormente se había establecido la condiciónn de que no se podía crear un Negocio si no se tenía un propietario asociado. Por mantener la simplicidad de la gestión de este recurso se cambia esta condición, tener un propietario asociado no es un requisito para crear un negocio pero sí para activarlo.
+
+### API RESTful - TDD
+
+Ahora creamos la interfaz para agregar usuarios como propietarios a un negocio, agregar negocios como negocios propios a un usuario, ver los negocios de un usuario y ver los propietarios de un negocio.
+
+Empezamos escribiendo los test de las peticiones, y vamos agregando las rutas y acciones hasta pasarlos.
+
+    $ touch spec/requests/propietarios_negocios_spec.rb

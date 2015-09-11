@@ -5,12 +5,12 @@ class DireccionesController < ApplicationController
 
   # GET /usuarios/:id/direcciones
   def index
-	render json: @usuario.direcciones
+    render json: @usuario.direcciones
   end
 
   # GET /usuarios/:id/direcciones/1
   def show
-	render json: @direccion
+    render json: @direccion
   end
 
   # DELETE /usuarios/:id/direcciones/1

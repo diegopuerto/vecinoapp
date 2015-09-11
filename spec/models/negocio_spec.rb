@@ -62,14 +62,6 @@ RSpec.describe Negocio, type: :model do
 	  	@tienda.valid?
 	  	expect(@tienda.errors[:hora_cierre]).to include(I18n.t 'errors.messages.blank')
 	  end
-
-#	  it "es inválido sin propietarios" do
-#	  	@tienda = FactoryGirl.build(:tienda)
-#	  	expect(@tienda.propietarios.empty?).to be true
-#	  	@tienda.valid?
-#	  	expect(@tienda.errors[:propietarios]).to include(I18n.t 'errors.messages.blank')
-#	  end
-
   end
 
   describe "Valores de atributos" do
@@ -166,41 +158,11 @@ RSpec.describe Negocio, type: :model do
   	end
   end
 
-=begin
   describe "Comportamiento" do
 
-  	before :each do
+  	it "actualiza atributo es_propietario del/los propietario/s cuando se elimina el negocio" do
   		@propietario_uno = FactoryGirl.create(:usuario_uno)
   		@propietario_dos = FactoryGirl.create(:usuario_dos)
-  	end
-
-  	it "actualiza atributo es_propietario del propietario cuando se crea el negocio" do
-  		expect(@propietario_uno.es_propietario?).to be false
-  		expect(@propietario_uno.negocios_propios.empty?).to be true
-  		@tienda = FactoryGirl.create(:tienda, propietarios: [@propietario_uno])
-  		expect(@propietario_uno.es_propietario?).to be true
-  		expect(@propietario_uno.negocios_propios.empty?).to be false
-  	end
-
-		it "actualiza atributo es_propietario del propietario cuando se agrega un propietario" do
-			@tienda = FactoryGirl.create(:tienda, propietarios: [@propietario_uno])
-			expect(@propietario_dos.es_propietario?).to be false
-  		expect(@propietario_dos.negocios_propios.empty?).to be true
-  		@tienda.propietarios << @propietario_dos
-  		expect(@propietario_dos.es_propietario?).to be true
-  		expect(@propietario_dos.negocios_propios.empty?).to be false
-		end
-
-		it "actualiza atributo es_propietario del propietario cuando se quita un propietario" do
-			@tienda = FactoryGirl.create(:tienda, propietarios: [@propietario_uno])
-			expect(@propietario_uno.es_propietario?).to be true
-  		expect(@propietario_uno.negocios_propios.empty?).to be false
-  		@tienda.propietarios.destroy(@propietario_uno)
-  		expect(@propietario_uno.es_propietario?).to be false
-  		expect(@propietario_uno.negocios_propios.empty?).to be true
-		end
-
-  	it "actualiza atributo es_propietario del/los propietario/s cuando se elimina el negocio" do
   		expect(@propietario_uno.es_propietario?).to be false
   		expect(@propietario_uno.negocios_propios.empty?).to be true
   		expect(@propietario_dos.es_propietario?).to be false
@@ -214,13 +176,23 @@ RSpec.describe Negocio, type: :model do
   		expect(@propietario_dos.negocios_propios.empty?).to be false
   		@tienda.destroy
   		expect(Negocio.count).to be 1
-  		expect(@propietario_uno.es_propietario?).to be false
+  		expect(@propietario_uno.reload.es_propietario?).to be false
   		expect(@propietario_uno.negocios_propios.empty?).to be true
-  		expect(@propietario_dos.es_propietario?).to be true
+  		expect(@propietario_dos.reload.es_propietario?).to be true
   		expect(@propietario_dos.negocios_propios.empty?).to be false
   	end
 
+  	it "bloquea la activación si no tiene propietarios" do
+  		@tienda = FactoryGirl.create(:tienda)
+  		expect(@tienda.propietarios.empty?).to be true
+  		@tienda.activo = true
+  		@tienda.valid?
+  		expect(@tienda.errors[:activo]).to include(I18n.t 'errors.messages.need_a_proprietary')
+  		@tienda.propietarios << FactoryGirl.create(:usuario_uno)
+  		@tienda.activo = true
+  		expect(@tienda.valid?).to be true
+  	end
+  
   end
-=end
 
 end

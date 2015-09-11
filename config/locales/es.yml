@@ -126,6 +126,7 @@ es:
       wrong_length: no tiene la longitud correcta (%{count} caracteres exactos)
       other_than: debe ser distinto de %{count}
       open_before_close: debe abrir antes de cerrar
+      need_a_proprietary: debe tener al menos un propietario
     template:
       body: 'Se encontraron problemas con los siguientes campos:'
       header:

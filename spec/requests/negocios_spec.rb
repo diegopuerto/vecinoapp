@@ -41,7 +41,7 @@ describe "Negocios API" do
       expect(coberturas_negocio).to match_array([1000, 2000])
       expect(telefonos_negocio).to match_array(["4432211", "4432568"])
       expect(imagenes_negocio).to match_array(["imagen.png", ""])
-      expect(activos_negocio).to match_array([true, false])
+      expect(activos_negocio).to match_array([false, false])
       expect(horas_apertura_negocio).to match_array(["05:56 AM", "05:56 AM"])
       expect(horas_cierre_negocio).to match_array(["11:56 PM", "11:56 PM"])
     end
@@ -69,7 +69,7 @@ describe "Negocios API" do
       expect(negocio["cobertura"]).to eq 1000
       expect(negocio["telefono"]).to eq "4432211"
       expect(negocio["imagen"]).to eq "imagen.png"
-      expect(negocio["activo"]).to eq true
+      expect(negocio["activo"]).to eq false
       expect(negocio["hora_apertura"]).to eq "05:56 AM"
       expect(negocio["hora_cierre"]).to eq "11:56 PM"
     end
@@ -91,6 +91,7 @@ describe "Negocios API" do
   describe "POST /negocios" do
     it "Crea un negocio" do
       tienda = FactoryGirl.create(:tienda)
+
       parametros_negocio = FactoryGirl.attributes_for(:tienda).to_json
 
       cabeceras_peticion = {

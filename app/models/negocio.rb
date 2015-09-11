@@ -1,4 +1,7 @@
 class Negocio < ActiveRecord::Base
+
+  # Callbacks
+  before_destroy :actualizar_propietarios
   
   # Validaciones
   validates_presence_of :nombre, :direccion, :latitud, :longitud,
@@ -20,9 +23,15 @@ class Negocio < ActiveRecord::Base
   validates :cobertura,
    numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validate :horario_positivo
+  validate :activar_si_tiene_un_propietario
 
   # Tipo
   enum tipo: [:tienda, :drogueria, :papeleria]
+
+  # Asociaciones
+  has_many :propietarios_negocios
+  has_many :propietarios, through: :propietarios_negocios,
+    source: :usuario
 
   private
 
@@ -36,4 +45,18 @@ class Negocio < ActiveRecord::Base
 	  	end
     end
 
+    # Valida que exista al menos un propietario antes de activar el negocio
+    def activar_si_tiene_un_propietario
+      if self.activo && self.propietarios.empty?
+        errors.add(:activo, (I18n.t 'errors.messages.need_a_proprietary'))
+      end
+    end
+
+    # Actualiza el atributo es_propietario de sus propietarios cuando se elimina
+    def actualizar_propietarios
+      self.propietarios.each do |p|
+        p.es_propietario = false if p.negocios_propios.count == 1
+        p.save
+      end
+    end
 end

@@ -23,3 +23,4 @@ en:
   errors:
     messages:
       open_before_close: must open before close
+      need_a_proprietary: must have at least one proprietary
