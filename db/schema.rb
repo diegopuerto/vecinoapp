@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150908192850) do
+ActiveRecord::Schema.define(version: 20150911223049) do
 
   create_table "direcciones", force: :cascade do |t|
     t.string   "nombre",     null: false
@@ -44,6 +44,17 @@ ActiveRecord::Schema.define(version: 20150908192850) do
     t.time     "hora_cierre",                    null: false
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
+  end
+
+  create_table "productos", force: :cascade do |t|
+    t.string   "nombre",        null: false
+    t.string   "diferenciador"
+    t.string   "marca",         null: false
+    t.string   "presentacion",  null: false
+    t.decimal  "precio"
+    t.string   "imagen",        null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "propietarios_negocios", force: :cascade do |t|

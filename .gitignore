@@ -15,3 +15,5 @@
 /log/*
 !/log/.keep
 /tmp
+#Ignorar carpetas del mac
+.DS_Store
