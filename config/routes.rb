@@ -27,5 +27,13 @@ Rails.application.routes.draw do
       defaults: { negocio_propio: true }
   end
 
+  resources :productos,
+   except: [:edit, :new],
+   defaults: { format: :json }
+
+   resources :categorias,
+   except: [:edit, :new],
+   defaults: { format: :json }
+
   root 'welcome#index'
 end
