@@ -11,7 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150908192850) do
+ActiveRecord::Schema.define(version: 20150923132639) do
+
+  create_table "categorias", force: :cascade do |t|
+    t.string   "nombre",     null: false
+    t.string   "imagen"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "categorias_productos", force: :cascade do |t|
+    t.integer  "producto_id"
+    t.integer  "categoria_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "categorias_productos", ["categoria_id", "producto_id"], name: "index_categorias_productos_on_categoria_id_and_producto_id", unique: true
+  add_index "categorias_productos", ["categoria_id"], name: "index_categorias_productos_on_categoria_id"
+  add_index "categorias_productos", ["producto_id"], name: "index_categorias_productos_on_producto_id"
 
   create_table "direcciones", force: :cascade do |t|
     t.string   "nombre",     null: false
@@ -44,6 +62,17 @@ ActiveRecord::Schema.define(version: 20150908192850) do
     t.time     "hora_cierre",                    null: false
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
+  end
+
+  create_table "productos", force: :cascade do |t|
+    t.string   "nombre",        null: false
+    t.string   "diferenciador"
+    t.string   "marca",         null: false
+    t.string   "presentacion",  null: false
+    t.decimal  "precio"
+    t.string   "imagen",        null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "propietarios_negocios", force: :cascade do |t|
