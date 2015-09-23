@@ -9,4 +9,9 @@ FactoryGirl.define do
 	imagen "imagen_lacteos.jpg"
   end
 
+  factory :categoria do
+    nombre "Categoria"
+	imagen "imagen_categoria.jpg"
+  end
+
 end

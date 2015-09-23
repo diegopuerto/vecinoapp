@@ -1,4 +1,5 @@
 FactoryGirl.define do
+
   factory :jugo, class: Producto do
     nombre "Jugo del Valle"
 	diferenciador "Naranja"
@@ -17,4 +18,12 @@ FactoryGirl.define do
 	imagen "alqueriadeslactosada.jpg"
   end
 
+  factory :producto do
+    nombre "Producto"
+	diferenciador "Diferenciador producto"
+	marca "Marca producto"
+	presentacion "5 kg"
+	precio 5000
+	imagen "imagen_producto.jpg"
+  end  
 end

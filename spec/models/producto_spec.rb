@@ -34,35 +34,35 @@ RSpec.describe Producto, type: :model do
 
 	describe "Valores de atributos" do
 
-			it "es inválido si el nombre tiene más de 50 caracteres" do
-  				@producto = FactoryGirl.build(:producto, nombre: "a"*51)
+			it "es inválido si el nombre tiene más de 100 caracteres" do
+  				@producto = FactoryGirl.build(:producto, nombre: "a"*101)
 	  			@producto.valid?
-	  			expect(@producto.errors[:nombre]).to include(I18n.t 'errors.messages.too_long', count: 50)
+	  			expect(@producto.errors[:nombre]).to include(I18n.t 'errors.messages.too_long', count: 100)
   		end
 
 
-  			it "es inválido si el diferenciador tiene más de 50 caracteres" do
-  				@producto = FactoryGirl.build(:producto, diferenciador: "a"*51)
+  			it "es inválido si el diferenciador tiene más de 100 caracteres" do
+  				@producto = FactoryGirl.build(:producto, diferenciador: "a"*101)
 	  			@producto.valid?
-	  			expect(@producto.errors[:diferenciador]).to include(I18n.t 'errors.messages.too_long', count: 50)
+	  			expect(@producto.errors[:diferenciador]).to include(I18n.t 'errors.messages.too_long', count: 100)
   		end
 
-  			it "es inválido si la marca tiene más de 50 caracteres" do
-  				@producto = FactoryGirl.build(:producto, marca: "a"*51)
+  			it "es inválido si la marca tiene más de 100 caracteres" do
+  				@producto = FactoryGirl.build(:producto, marca: "a"*101)
 	  			@producto.valid?
-	  			expect(@producto.errors[:marca]).to include(I18n.t 'errors.messages.too_long', count: 50)
+	  			expect(@producto.errors[:marca]).to include(I18n.t 'errors.messages.too_long', count: 100)
   		end
 
-  			it "es inválido si la presentacion tiene más de 50 caracteres" do
-  				@producto = FactoryGirl.build(:producto, presentacion: "a"*51)
+  			it "es inválido si la presentacion tiene más de 100 caracteres" do
+  				@producto = FactoryGirl.build(:producto, presentacion: "a"*101)
 	  			@producto.valid?
-	  			expect(@producto.errors[:presentacion]).to include(I18n.t 'errors.messages.too_long', count: 50)
+	  			expect(@producto.errors[:presentacion]).to include(I18n.t 'errors.messages.too_long', count: 100)
   		end
 
-  			it "es inválido si el precio tiene más de 50 caracteres" do
-  				@producto = FactoryGirl.build(:producto, presentacion: "a"*51)
+  			it "es inválido si el precio tiene más de 100 caracteres" do
+  				@producto = FactoryGirl.build(:producto, presentacion: "a"*101)
 	  			@producto.valid?
-	  			expect(@producto.errors[:presentacion]).to include(I18n.t 'errors.messages.too_long', count: 50)
+	  			expect(@producto.errors[:presentacion]).to include(I18n.t 'errors.messages.too_long', count: 100)
   		end
 
   			it "es inválido si el precio es menor que cero" do
@@ -71,10 +71,10 @@ RSpec.describe Producto, type: :model do
 	  			expect(@producto.errors[:precio]).to include(I18n.t 'errors.messages.greater_than_or_equal_to', count: 0)
 	  	end
 
-	  		it "es inválido si la imagen tiene más de 50 caracteres" do
-  				@producto = FactoryGirl.build(:producto, imagen: "a"*51)
+	  		it "es inválido si la imagen tiene más de 250 caracteres" do
+  				@producto = FactoryGirl.build(:producto, imagen: "a"*251)
 	  			@producto.valid?
-	  			expect(@producto.errors[:imagen]).to include(I18n.t 'errors.messages.too_long', count: 50)
+	  			expect(@producto.errors[:imagen]).to include(I18n.t 'errors.messages.too_long', count: 250)
 		end
 	end
 
