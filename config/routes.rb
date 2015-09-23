@@ -29,7 +29,14 @@ Rails.application.routes.draw do
 
   resources :productos,
    except: [:edit, :new],
-   defaults: { format: :json }
+   defaults: { format: :json } do
+
+    resources :categorias,
+      only: [:index, :create, :destroy],
+      defaults: { categoria_producto: true }
+
+ 
+  end
 
    resources :categorias,
    except: [:edit, :new],

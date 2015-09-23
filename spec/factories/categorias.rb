@@ -11,7 +11,7 @@ FactoryGirl.define do
 
   factory :categoria do
     nombre "Categoria"
-	imagen "imagen_categoria.jpg"
+	   imagen "imagen_categoria.jpg"
   end
 
 end
