@@ -17,7 +17,7 @@ CSV.foreach("db/categorias_220915.csv", { encoding: "ISO-8859-1", headers: true,
  Categoria.create(fila.to_hash)
 end
 
-CSV.foreach("db/productos_220915.csv", { encoding: "ISO-8859-1", headers: true, header_converters: :symbol, converters: :all}) do |fila|
+CSV.foreach("db/productos_290915.csv", { encoding: "ISO-8859-1", headers: true, header_converters: :symbol, converters: :all}) do |fila|
  Producto.create(fila.to_hash)
 end
 
