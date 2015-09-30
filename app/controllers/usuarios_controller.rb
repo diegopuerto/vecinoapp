@@ -51,7 +51,7 @@ class UsuariosController < ApplicationController
         render json: @usuario, status: :created
       else
         render json: @usuario.errors, status: :unprocessable_entity
-      end 
+      end
     end
   end
 

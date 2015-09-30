@@ -24,4 +24,16 @@ FactoryGirl.define do
     es_propietario false
   end
 
+  factory :admin, class: Usuario do
+    uid "adminpruebas@correo.com"
+    provider "email"
+    password "clavesecreta"
+    email "adminpruebas@correo.com"
+    name "Administrador"
+    image "admin.png"
+    telefono "3006785432"
+    es_admin true
+    es_propietario false
+  end
+
 end
