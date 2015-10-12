@@ -36,4 +36,16 @@ FactoryGirl.define do
     es_propietario false
   end
 
+  factory :usuario_nuevo, class: Usuario do
+    uid "nuevousuario@correo.com"
+    provider "email"
+    password "clavesecreta"
+    email "nuevousuario@correo.com"
+    name "Nuevo Usuario"
+    image "nuevousuario.png"
+    telefono "3006745322"
+    es_admin false
+    es_propietario false
+  end
+
 end
