@@ -1,0 +1,88 @@
+-- create_table("categorias", {:force=>:cascade})
+   -> 0.0081s
+-- create_table("categorias_productos", {:force=>:cascade})
+   -> 0.0023s
+-- add_index("categorias_productos", ["categoria_id", "producto_id"], {:name=>"index_categorias_productos_on_categoria_id_and_producto_id", :unique=>true})
+   -> 0.0025s
+-- add_index("categorias_productos", ["categoria_id"], {:name=>"index_categorias_productos_on_categoria_id"})
+   -> 0.0028s
+-- add_index("categorias_productos", ["producto_id"], {:name=>"index_categorias_productos_on_producto_id"})
+   -> 0.0029s
+-- create_table("direcciones", {:force=>:cascade})
+   -> 0.0022s
+-- add_index("direcciones", ["usuario_id"], {:name=>"index_direcciones_on_usuario_id"})
+   -> 0.0025s
+-- create_table("negocios", {:force=>:cascade})
+   -> 0.0049s
+-- create_table("negocios_productos", {:force=>:cascade})
+   -> 0.0019s
+-- add_index("negocios_productos", ["negocio_id", "producto_id"], {:name=>"index_negocios_productos_on_negocio_id_and_producto_id", :unique=>true})
+   -> 0.0017s
+-- add_index("negocios_productos", ["negocio_id"], {:name=>"index_negocios_productos_on_negocio_id"})
+   -> 0.0021s
+-- add_index("negocios_productos", ["producto_id"], {:name=>"index_negocios_productos_on_producto_id"})
+   -> 0.0031s
+-- create_table("productos", {:force=>:cascade})
+   -> 0.0024s
+-- create_table("propietarios_negocios", {:force=>:cascade})
+   -> 0.0020s
+-- add_index("propietarios_negocios", ["negocio_id"], {:name=>"index_propietarios_negocios_on_negocio_id"})
+   -> 0.0018s
+-- add_index("propietarios_negocios", ["usuario_id", "negocio_id"], {:name=>"index_propietarios_negocios_on_usuario_id_and_negocio_id", :unique=>true})
+   -> 0.0022s
+-- add_index("propietarios_negocios", ["usuario_id"], {:name=>"index_propietarios_negocios_on_usuario_id"})
+   -> 0.0031s
+-- create_table("usuarios", {:force=>:cascade})
+   -> 0.0024s
+-- add_index("usuarios", ["email"], {:name=>"index_usuarios_on_email"})
+   -> 0.0021s
+-- add_index("usuarios", ["reset_password_token"], {:name=>"index_usuarios_on_reset_password_token", :unique=>true})
+   -> 0.0025s
+-- add_index("usuarios", ["uid", "provider"], {:name=>"index_usuarios_on_uid_and_provider", :unique=>true})
+   -> 0.0029s
+-- initialize_schema_migrations_table()
+   -> 0.0058s
+-- create_table("categorias", {:force=>:cascade})
+   -> 0.0026s
+-- create_table("categorias_productos", {:force=>:cascade})
+   -> 0.0020s
+-- add_index("categorias_productos", ["categoria_id", "producto_id"], {:name=>"index_categorias_productos_on_categoria_id_and_producto_id", :unique=>true})
+   -> 0.0025s
+-- add_index("categorias_productos", ["categoria_id"], {:name=>"index_categorias_productos_on_categoria_id"})
+   -> 0.0036s
+-- add_index("categorias_productos", ["producto_id"], {:name=>"index_categorias_productos_on_producto_id"})
+   -> 0.0033s
+-- create_table("direcciones", {:force=>:cascade})
+   -> 0.0024s
+-- add_index("direcciones", ["usuario_id"], {:name=>"index_direcciones_on_usuario_id"})
+   -> 0.0022s
+-- create_table("negocios", {:force=>:cascade})
+   -> 0.0028s
+-- create_table("negocios_productos", {:force=>:cascade})
+   -> 0.0021s
+-- add_index("negocios_productos", ["negocio_id", "producto_id"], {:name=>"index_negocios_productos_on_negocio_id_and_producto_id", :unique=>true})
+   -> 0.0018s
+-- add_index("negocios_productos", ["negocio_id"], {:name=>"index_negocios_productos_on_negocio_id"})
+   -> 0.0024s
+-- add_index("negocios_productos", ["producto_id"], {:name=>"index_negocios_productos_on_producto_id"})
+   -> 0.0026s
+-- create_table("productos", {:force=>:cascade})
+   -> 0.0018s
+-- create_table("propietarios_negocios", {:force=>:cascade})
+   -> 0.0018s
+-- add_index("propietarios_negocios", ["negocio_id"], {:name=>"index_propietarios_negocios_on_negocio_id"})
+   -> 0.0019s
+-- add_index("propietarios_negocios", ["usuario_id", "negocio_id"], {:name=>"index_propietarios_negocios_on_usuario_id_and_negocio_id", :unique=>true})
+   -> 0.0025s
+-- add_index("propietarios_negocios", ["usuario_id"], {:name=>"index_propietarios_negocios_on_usuario_id"})
+   -> 0.0038s
+-- create_table("usuarios", {:force=>:cascade})
+   -> 0.0076s
+-- add_index("usuarios", ["email"], {:name=>"index_usuarios_on_email"})
+   -> 0.0096s
+-- add_index("usuarios", ["reset_password_token"], {:name=>"index_usuarios_on_reset_password_token", :unique=>true})
+   -> 0.0034s
+-- add_index("usuarios", ["uid", "provider"], {:name=>"index_usuarios_on_uid_and_provider", :unique=>true})
+   -> 0.0238s
+-- initialize_schema_migrations_table()
+   -> 0.0068s

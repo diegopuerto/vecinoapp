@@ -32,4 +32,7 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'categoria_producto', 'categorias_productos'
   inflect.irregular 'CategoriaProducto', 'CategoriasProductos'
+
+  inflect.irregular 'negocio_producto', 'negocios_productos'
+  inflect.irregular 'NegocioProducto', 'NegociosProductos'
 end

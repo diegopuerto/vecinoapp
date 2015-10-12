@@ -13,14 +13,15 @@
 
 require 'csv'
 
-CSV.foreach("db/categorias_220915.csv", { encoding: "ISO-8859-1", headers: true, header_converters: :symbol, converters: :all}) do |fila|
+CSV.foreach("db/categorias_061015.csv", { encoding: "ISO-8859-1", col_sep: ";", headers: true, header_converters: :symbol, converters: :all}) do |fila|
  Categoria.create(fila.to_hash)
 end
 
-CSV.foreach("db/productos_290915.csv", { encoding: "ISO-8859-1", headers: true, header_converters: :symbol, converters: :all}) do |fila|
+
+CSV.foreach("db/productos_061015.csv", { encoding: "ISO-8859-1", col_sep: ";", headers: true, header_converters: :symbol, converters: :all}) do |fila|
  Producto.create(fila.to_hash)
 end
 
-CSV.foreach("db/categorias_productos_220915.csv", { encoding: "ISO-8859-1", headers: true, header_converters: :symbol, converters: :all}) do |fila|
+CSV.foreach("db/productos_con_categoria_ids.csv", { encoding: "ISO-8859-1", col_sep: ";", headers: true, header_converters: :symbol, converters: :all}) do |fila|
  CategoriaProducto.create(fila.to_hash)
 end

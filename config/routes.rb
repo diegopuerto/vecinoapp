@@ -38,6 +38,16 @@ Rails.application.routes.draw do
  
   end
 
+   resources :negocios,
+   except: [:edit, :new],
+   defaults: { format: :json } do
+
+    resources :productos,
+      except: [:edit, :new],
+      defaults: { negocio_producto: true }
+
+   end
+
    resources :categorias,
    except: [:edit, :new],
    defaults: { format: :json }
