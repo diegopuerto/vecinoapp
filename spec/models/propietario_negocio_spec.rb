@@ -32,6 +32,7 @@ RSpec.describe PropietarioNegocio, type: :model do
 	  end
 
 	  it "es inválido si el negocio o el usuario no existen" do
+      Usuario.destroy_all
 	  	@propietario_negocio = FactoryGirl.build(:propietario_negocio)
 	  	expect(Usuario.exists?(1)).to be false
 	  	expect(Negocio.exists?(1)).to be false

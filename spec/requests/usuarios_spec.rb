@@ -1,7 +1,35 @@
 describe "Usuarios API" do
 
+  before :each do
+    @cabeceras_peticion = {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    }
+    @usuario_uno = FactoryGirl.create :usuario_uno
+    @admin = FactoryGirl.create :admin
+  end
+
   # index
   describe "GET /usuarios" do
+    context "usuario no autenticado" do
+      it "No permite la consulta y devuelve un mensaje de error" do
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario no administrador autenticado" do
+      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario administrador autenticado" do
+
+    end
     it "Devuelve todos los usuarios" do
       FactoryGirl.create :usuario_uno
       FactoryGirl.create :usuario_dos
@@ -30,6 +58,25 @@ describe "Usuarios API" do
  
   # show
   describe "GET /usuarios/:id" do
+    context "usuario no autenticado" do
+      it "No permite la consulta y devuelve un mensaje de error" do
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario no administrador autenticado" do
+      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario administrador autenticado" do
+
+    end
     it "Devuelve el usuarios solicitado" do
       u = FactoryGirl.create :usuario_uno
 
@@ -49,6 +96,25 @@ describe "Usuarios API" do
 
   # destroy
   describe "DELETE /usuarios/:id" do
+    context "usuario no autenticado" do
+      it "No permite la consulta y devuelve un mensaje de error" do
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario no administrador autenticado" do
+      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario administrador autenticado" do
+
+    end
     it "Elimina un usuario" do
       u = FactoryGirl.create :usuario_uno
 
@@ -61,6 +127,25 @@ describe "Usuarios API" do
 
   # create
   describe "POST /usuarios" do
+    context "usuario no autenticado" do
+      it "No permite la consulta y devuelve un mensaje de error" do
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario no administrador autenticado" do
+      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario administrador autenticado" do
+
+    end
     it "Crea un usuario" do
       parametros_usuario = {
         "email" => "usuario@correo.com",
@@ -91,6 +176,25 @@ describe "Usuarios API" do
 
   # update
   describe "PUT /usuarios/:id" do
+    context "usuario no autenticado" do
+      it "No permite la consulta y devuelve un mensaje de error" do
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario no administrador autenticado" do
+      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+    context "usuario administrador autenticado" do
+
+    end
     it "Actualiza un usuario" do
       u = FactoryGirl.create :usuario_uno
 

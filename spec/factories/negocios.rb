@@ -36,4 +36,21 @@ FactoryGirl.define do
 		hora_cierre "11:56 PM"
   end
 
+  factory :negocio_nuevo, class: Negocio do
+    nombre "Nuevo Rspec"
+		direccion "Carrera 44 # 2 - 5"
+		latitud 1.1
+		longitud -5.5
+		reputacion 4700
+		tiempo_entrega 30
+		pedido_minimo 4000
+		recargo 50000
+		tipo "papeleria"
+		cobertura 1000
+		telefono "4532568"
+		imagen ""
+		activo false
+		hora_apertura "05:56 AM"
+		hora_cierre "11:56 PM"
+  end
 end
