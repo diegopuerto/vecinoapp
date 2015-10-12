@@ -12,8 +12,12 @@ class Producto < ActiveRecord::Base
    	 numericality: { greater_than_or_equal_to: 0, only_integer: true }
    	validates :imagen, length: { maximum:250 }
 
+   	#Asociaciones
    	has_many :categorias_productos
    	has_many :categorias, through: :categorias_productos
+
+   	has_many :negocios_productos
+   	has_many :negocios, through: :negocios_productos
 
 
 end

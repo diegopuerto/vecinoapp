@@ -33,6 +33,18 @@ class Negocio < ActiveRecord::Base
   has_many :propietarios, through: :propietarios_negocios,
     source: :usuario
 
+  #Funcion seleccionar productos pertenecientes a una tienda
+  has_many :negocios_productos
+  has_many :productos, through: :negocios_productos do 
+    def con_precio
+      proxy_association.target.each do | p |
+        np = NegocioProducto.find_by negocio_id: proxy_association.owner.id, producto_id: p.id
+        precionegocio = np.precio
+        p.precio = precionegocio
+      end
+    end
+  end
+
   private
 
     # Valida que la hora de cierre sea posterior a la hora de apertura
