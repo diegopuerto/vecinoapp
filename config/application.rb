@@ -36,5 +36,9 @@ module ApiVecino
       end
     end
 
+    ## Skip Filtro Autenticación DeviseTokenAuth
+    config.to_prepare do
+      DeviseTokenAuth::SessionsController.skip_before_filter :validar_admin
+    end
   end
 end
