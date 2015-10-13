@@ -8,6 +8,7 @@ describe "NegociosProductos API" do
     @usuario_uno = FactoryGirl.create :usuario_uno
     @admin = FactoryGirl.create :admin
     @jugo = FactoryGirl.create :jugo
+    @leche = FactoryGirl.create :leche
     @tienda = FactoryGirl.create :tienda
 end
 
@@ -15,9 +16,7 @@ end
  # index
   describe "GET /negocios/:negocio_id/productos" do
     before :each do
-      @tienda = FactoryGirl.create :tienda,
-                productos: [FactoryGirl.create(:leche),
-                FactoryGirl.create(:jugo)]
+      @tienda.productos << [@jugo, @leche]
     end
 
     context "usuario no autenticado" do
@@ -45,10 +44,8 @@ end
    context "usuario administrador autenticado" do
 
       it "Devuelve todos los productos del negocio con id :negocio_id" do
-
+          # Login usuario_admin
           @cabeceras_peticion.merge! @admin.create_new_auth_token
-    
-          #pro = FactoryGirl.create :producto
 
           get "/negocios/#{@tienda.id}/productos", {}, @cabeceras_peticion
 
@@ -60,8 +57,8 @@ end
           nombres_producto = productos.map { |m| m["nombre"] }
           imagenes_producto = productos.map { |m| m["imagen"] }
 
-          expect(nombres_producto).to match_array(["Jugo del Valle", "Alqueria" ])
-          expect(imagenes_producto).to match_array(["jugodelvallenaranja.jpg", "alqueriadeslactosada.jpg"])
+          expect(nombres_producto).to match_array([@jugo.nombre, @leche.nombre ]) 
+          expect(imagenes_producto).to match_array([@jugo.imagen, @leche.imagen ])
 
       end
     end
@@ -75,13 +72,13 @@ end
       "producto_id": @jugo.id,
       "precio": 10000
       }.to_json
+
+      expect(@tienda.productos).not_to include(@jugo)
       end
 
     context "usuario no autenticado" do
       it "No permite la consulta y devuelve un mensaje de error" do
-
-        expect(@tienda.productos).not_to include(@jugo)
-
+        
         post "/negocios/#{@tienda.id}/productos", @parametros_producto, @cabeceras_peticion
 
         expect(response.status).to eq 401 # Unauthorized
@@ -91,8 +88,6 @@ end
 
     context "usuario no administrador autenticado" do
       it "No le permite la consulta al usuario y devuelve un mensaje de error" do
-
-        expect(@tienda.productos).not_to include(@jugo)
 
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
@@ -106,9 +101,7 @@ end
 
     context "usuario administrador autenticado" do
       it "Agrega un producto al negocio con id :negocio_id" do
-
-        expect(@tienda.productos).not_to include(@jugo) 
-
+        # Login usuario_admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
 
         post "/negocios/#{@tienda.id}/productos", @parametros_producto, @cabeceras_peticion
@@ -121,14 +114,15 @@ end
 
   # destroy
 
-  describe "DELETE /negocios/:negocio_id/productos/:id" do
+    describe "DELETE /negocios/:negocio_id/productos/:id" do
+
+      before :each do
+        @tienda.productos << @jugo
+        expect(@tienda.reload.productos).to include(@jugo)
+      end
 
     context "usuario no autenticado" do
       it "No permite la consulta y devuelve un mensaje de error" do
-
-        @tienda.productos << @jugo
-
-        expect(@tienda.reload.productos).to include(@jugo)
 
         delete "/negocios/#{@tienda.id}/productos/#{@jugo.id}", {}, @cabeceras_peticion
 
@@ -139,10 +133,6 @@ end
 
     context "usuario no administrador autenticado" do
       it "No le permite la consulta al usuario y devuelve un mensaje de error" do
-
-        @tienda.productos << @jugo
-
-        expect(@tienda.reload.productos).to include(@jugo)
 
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
@@ -157,12 +147,8 @@ end
 
     context "usuario administrador autenticado" do
       it "Quita el producto identificado con :id del negocio con id :negocio_id" do
-
+        # Login usuario_admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
-
-        @tienda.productos << @jugo
-
-        expect(@tienda.reload.productos).to include(@jugo)
 
         delete "/negocios/#{@tienda.id}/productos/#{@jugo.id}", {}, @cabeceras_peticion
 
@@ -183,15 +169,14 @@ end
         "producto_id": @jugo.id,
         "precio": 23400
         }.to_json
+
+        @tienda.productos << @jugo
+        expect(@tienda.reload.productos).to include(@jugo)
     end
 
 
     context "usuario no autenticado" do
       it "No permite la consulta y devuelve un mensaje de error" do
-
-        @tienda.productos << @jugo
-
-        expect(@tienda.reload.productos).to include(@jugo)
 
         put "/negocios/#{@tienda.id}/productos/#{@jugo.id}", @parametros_producto, @cabeceras_peticion
 
@@ -202,10 +187,6 @@ end
 
     context "usuario no administrador autenticado" do
       it "No le permite la consulta al usuario y devuelve un mensaje de error" do
-
-        @tienda.productos << @jugo
-
-        expect(@tienda.reload.productos).to include(@jugo)
 
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
@@ -219,11 +200,7 @@ end
 
     context "usuario administrador autenticado" do
         it "Actualiza el producto identificado con :id del negocio con id :negocio_id" do
-
-          @tienda.productos << @jugo
-
-          expect(@tienda.reload.productos).to include(@jugo)
-
+          # Login usuario_admin
           @cabeceras_peticion.merge! @admin.create_new_auth_token
 
           put "/negocios/#{@tienda.id}/productos/#{@jugo.id}", @parametros_producto, @cabeceras_peticion
