@@ -25,7 +25,11 @@ Rails.application.routes.draw do
       only: [:index, :create, :destroy],
       controller: 'usuarios',
       defaults: { negocio_propio: true }
-  end
+
+    resources :pedidos,
+       only: [:index, :show, :update],
+       defaults: { format: :json }
+   end
 
   resources :productos,
    except: [:edit, :new],

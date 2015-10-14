@@ -32,6 +32,7 @@ class Negocio < ActiveRecord::Base
   has_many :propietarios_negocios
   has_many :propietarios, through: :propietarios_negocios,
     source: :usuario
+  has_many :pedidos, dependent: :destroy
 
   #Funcion seleccionar productos pertenecientes a una tienda
   has_many :negocios_productos
