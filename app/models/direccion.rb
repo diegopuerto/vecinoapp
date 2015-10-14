@@ -2,6 +2,7 @@ class Direccion < ActiveRecord::Base
   
   # Asociaciones
   belongs_to :usuario
+  has_many :pedidos, dependent: :destroy
 
   # Validaciones
   validates_presence_of :nombre, :lat, :long, :texto, :usuario_id

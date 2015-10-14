@@ -61,5 +61,15 @@ Rails.application.routes.draw do
    except: [:edit, :new],
    defaults: { format: :json }
 
+   resources :pedidos,
+    except: [:edit, :new],
+    defaults: { format: :json } do
+
+	resources :direcciones,
+         except: [:edit, :new],
+	 defaults: { pedido_direccion: true }
+   end
+
+
   root 'welcome#index'
 end

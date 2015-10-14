@@ -12,4 +12,5 @@ class Pedido < ActiveRecord::Base
    	 numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   enum estado: [ :nuevo, :enviado, :cancelado, :recibido ]
+  enum medio_pago: [:efectivo, :tarjeta_debito, :tarjeta_credito]
 end
