@@ -9,10 +9,15 @@ Rails.application.routes.draw do
    	resources :direcciones,
    	 except: [:edit, :new]
 
-    resources :negocios_propios,
-      only: [:index, :create, :destroy],
-      controller: 'negocios',
-      defaults: { propietario: true }
+        resources :negocios_propios,
+         only: [:index, :create, :destroy],
+         controller: 'negocios',
+         defaults: { propietario: true }
+	
+	resources :pedidos,
+   	 except: [:edit, :new],
+   	 defaults: { usuario_pedido: true }
+	 
   end
 
   resources :direcciones, only: [:destroy, :update], defaults: { format: :json }
@@ -27,7 +32,7 @@ Rails.application.routes.draw do
       defaults: { negocio_propio: true }
 
     resources :pedidos,
-       only: [:index, :show, :update],
+       except: [:edit, :new],
        defaults: { format: :json }
    end
 
