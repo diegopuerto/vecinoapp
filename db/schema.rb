@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151013191606) do
+ActiveRecord::Schema.define(version: 20151014215831) do
 
   create_table "categorias", force: :cascade do |t|
     t.string   "nombre",     null: false
@@ -92,6 +92,18 @@ ActiveRecord::Schema.define(version: 20151013191606) do
   add_index "pedidos", ["direccion_id"], name: "index_pedidos_on_direccion_id"
   add_index "pedidos", ["negocio_id"], name: "index_pedidos_on_negocio_id"
   add_index "pedidos", ["usuario_id"], name: "index_pedidos_on_usuario_id"
+
+  create_table "pedidos_productos", force: :cascade do |t|
+    t.integer  "pedido_id"
+    t.integer  "producto_id"
+    t.integer  "cantidad"
+    t.integer  "precio"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "pedidos_productos", ["pedido_id"], name: "index_pedidos_productos_on_pedido_id"
+  add_index "pedidos_productos", ["producto_id"], name: "index_pedidos_productos_on_producto_id"
 
   create_table "productos", force: :cascade do |t|
     t.string   "nombre",        null: false

@@ -35,4 +35,7 @@ ActiveSupport::Inflector.inflections do |inflect|
 
   inflect.irregular 'negocio_producto', 'negocios_productos'
   inflect.irregular 'NegocioProducto', 'NegociosProductos'
+
+  inflect.irregular 'pedido_producto', 'pedidos_productos'
+  inflect.irregular 'PedidoProducto', 'PedidosProductos'
 end

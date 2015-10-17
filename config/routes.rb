@@ -68,6 +68,10 @@ Rails.application.routes.draw do
 	resources :direcciones,
          except: [:edit, :new],
 	 defaults: { pedido_direccion: true }
+
+	resources :productos,
+         except: [:edit, :new],
+         defaults: { pedido_producto: true }
    end
 
 

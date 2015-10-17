@@ -2,6 +2,8 @@ class Pedido < ActiveRecord::Base
   belongs_to :negocio
   belongs_to :usuario
   belongs_to :direccion
+  has_many :pedidos_productos
+  has_many :productos, through: :pedidos_productos
 
   #Validaciones
   validates_presence_of :total, :estado, :medio_pago
