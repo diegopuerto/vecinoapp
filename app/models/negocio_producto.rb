@@ -5,4 +5,5 @@ class NegocioProducto < ActiveRecord::Base
   #Validaciones
   validates_presence_of :negocio, :producto
   validates_uniqueness_of :producto, scope: :negocio
+
 end

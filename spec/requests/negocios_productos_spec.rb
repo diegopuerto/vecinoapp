@@ -206,7 +206,9 @@ end
           put "/negocios/#{@tienda.id}/productos/#{@jugo.id}", @parametros_producto, @cabeceras_peticion
 
           expect(response.status).to be 204 # No Content
-          expect(@tienda.reload.productos.find(@jugo.id).precio).to eq 23400
+
+          np = NegocioProducto.find_by negocio_id: @tienda.id, producto_id: @jugo.id
+          expect(NegocioProducto.find(np.id).precio).to eq 23400
         end
     end
   end

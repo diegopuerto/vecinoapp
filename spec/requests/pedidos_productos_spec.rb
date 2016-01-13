@@ -6,12 +6,23 @@ RSpec.describe "PedidosProductos", type: :request do
       "Accept": "application/json",
       "Content-Type": "application/json"
     }
-    @producto_uno = FactoryGirl.create :jugo
-    @producto_dos = FactoryGirl.create :leche
-    @pedido_uno = FactoryGirl.create :pedido_uno
-    @pedido_dos = FactoryGirl.create :pedido_dos
     @usuario_uno = FactoryGirl.create :usuario_uno
     @admin = FactoryGirl.create :admin
+    @producto_uno = FactoryGirl.create :jugo
+    @producto_dos = FactoryGirl.create :leche
+    @negocio_uno = FactoryGirl.create :tienda
+    @pedido_uno = FactoryGirl.create :pedido_uno
+    @negocio_uno.productos << @producto_uno
+    @negocio_uno.productos << @producto_dos
+    @pn = NegocioProducto.find_by negocio_id: @negocio_uno.id, producto_id: @producto_uno.id
+    @pn_dos = NegocioProducto.find_by negocio_id: @negocio_uno.id, producto_id: @producto_dos.id
+    @pn.precio = 15000
+    @pn.save
+    @pn_dos.precio = 30000
+    @pn_dos.save
+    @negocio_uno.pedidos << @pedido_uno
+    @pedido_dos = FactoryGirl.create :pedido_dos
+    expect(@negocio_uno.productos).to include(@producto_uno)
   end
 
   # index
@@ -68,7 +79,7 @@ RSpec.describe "PedidosProductos", type: :request do
         expect(diferenciadores_producto).to match_array([@producto_uno.diferenciador, @producto_dos.diferenciador ])
         expect(marcas_producto).to match_array([@producto_uno.marca, @producto_dos.marca ])
         expect(presentaciones_producto).to match_array([@producto_uno.presentacion, @producto_dos.presentacion ])
-        expect(precios_producto).to match_array([@producto_uno.precio, @producto_dos.precio ])
+        expect(precios_producto).to match_array([@pn.precio, @pn_dos.precio ])
         expect(imagenes_producto).to match_array([@producto_uno.imagen, @producto_dos.imagen ])
        
       end
@@ -82,7 +93,7 @@ RSpec.describe "PedidosProductos", type: :request do
     before :each do
       @parametros_producto = {
       	"cantidad": 5,
-        "precio": @producto_uno.precio,
+       #"precio": @producto_uno.precio,
         "producto_id": @producto_uno.id
       }.to_json
       expect(@pedido_uno.productos).not_to include(@producto_uno)

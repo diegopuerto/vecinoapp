@@ -8,7 +8,7 @@ class ProductosController < ApplicationController
     if params[:pedido_producto]
       @pedido = Pedido.find(params[:pedido_id])
       @pedido.productos.reload
-      render json: @pedido.productos
+      render json: @pedido.productos.con_precio
 
     elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
@@ -20,6 +20,7 @@ class ProductosController < ApplicationController
       render json: @productos
     end
   end
+
 # GET /pedidos/:pedido_id/productos/:producto_id
 # GET /productos/1
   def show
@@ -59,27 +60,32 @@ class ProductosController < ApplicationController
   def create
     if params[:pedido_producto]
       pp = PedidoProducto.new parametros_crear_pedido_producto
-      if pp.save
+      @pedido = Pedido.find(params[:pedido_id])
+      @producto = Producto.find(params[:producto_id])
+      @negocio = @pedido.negocio_id 
+      pn = NegocioProducto.find_by negocio_id: @negocio, producto_id: @producto.id
+      pp.precio = pn.precio
+      if pp.save!
         render json: pp, status: :created
       else
         render json: {:errors => {producto: ["No se ha podido agregar producto"]}}, status: :unprocessable_entity
       end
 
-      elsif params[:negocio_producto]
-        np = NegocioProducto.new parametros_crear_producto_negocio
-        if np.save
-          render json: np, status: :created
-        else
-          render json: {:errors => {producto: ["No se ha podido agregar producto"]}}, status: :unprocessable_entity
-        end
+    elsif params[:negocio_producto]
+      np = NegocioProducto.new parametros_crear_producto_negocio
+      if np.save
+        render json: np, status: :created
       else
-  	    @producto = Producto.new(parametros_producto)
-        if @producto.save
-          render json: @producto, status: :created
-        else
-          render json: @producto.errors, status: :unprocessable_entity
-        end
+        render json: {:errors => {producto: ["No se ha podido agregar producto"]}}, status: :unprocessable_entity
       end
+    else
+  	  @producto = Producto.new(parametros_producto)
+      if @producto.save
+        render json: @producto, status: :created
+      else
+        render json: @producto.errors, status: :unprocessable_entity
+      end
+    end
   end
 
   # PATCH/PUT /productos/1
@@ -96,7 +102,7 @@ class ProductosController < ApplicationController
 
     elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
-      np = @negocio.productos.find(@producto.id)
+      np = NegocioProducto.find_by negocio_id: @negocio.id, producto_id: @producto.id 
       if np.update(parametros_actualizar_producto_negocio)
         head :no_content
       else
@@ -137,7 +143,6 @@ class ProductosController < ApplicationController
     def parametros_crear_pedido_producto
         params.permit(:pedido_id,
         :producto_id,
-        :precio,
         :cantidad)
     end
 
