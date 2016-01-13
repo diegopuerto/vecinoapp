@@ -9,10 +9,15 @@ Rails.application.routes.draw do
    	resources :direcciones,
    	 except: [:edit, :new]
 
-    resources :negocios_propios,
-      only: [:index, :create, :destroy],
-      controller: 'negocios',
-      defaults: { propietario: true }
+        resources :negocios_propios,
+         only: [:index, :create, :destroy],
+         controller: 'negocios',
+         defaults: { propietario: true }
+	
+	resources :pedidos,
+   	 except: [:edit, :new],
+   	 defaults: { usuario_pedido: true }
+	 
   end
 
   resources :direcciones, only: [:destroy, :update], defaults: { format: :json }
@@ -25,7 +30,11 @@ Rails.application.routes.draw do
       only: [:index, :create, :destroy],
       controller: 'usuarios',
       defaults: { negocio_propio: true }
-  end
+
+    resources :pedidos,
+       except: [:edit, :new],
+       defaults: { format: :json }
+   end
 
   resources :productos,
    except: [:edit, :new],
@@ -51,6 +60,20 @@ Rails.application.routes.draw do
    resources :categorias,
    except: [:edit, :new],
    defaults: { format: :json }
+
+   resources :pedidos,
+    except: [:edit, :new],
+    defaults: { format: :json } do
+
+	resources :direcciones,
+         except: [:edit, :new],
+	 defaults: { pedido_direccion: true }
+
+	resources :productos,
+         except: [:edit, :new],
+         defaults: { pedido_producto: true }
+   end
+
 
   root 'welcome#index'
 end

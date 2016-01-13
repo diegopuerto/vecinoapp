@@ -10,4 +10,5 @@ class ProductoSerializer < ActiveModel::Serializer
   	def precio
   		object.precio.to_i
   	end
+
 end

@@ -1,10 +1,16 @@
 class ProductosController < ApplicationController
 		before_action :establecer_producto, only: [:show, :destroy, :update]
 
+# GET /pedidos/:pedido_id/productos
 # GET /negocios/:negocio_id/productos
 # GET /productos
   def index
-    if params[:negocio_producto]
+    if params[:pedido_producto]
+      @pedido = Pedido.find(params[:pedido_id])
+      @pedido.productos.reload
+      render json: @pedido.productos.con_precio
+
+    elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
       # Actualizar colección de productos
       @negocio.productos.reload
@@ -15,17 +21,30 @@ class ProductosController < ApplicationController
     end
   end
 
-	# GET /productos/1
+# GET /pedidos/:pedido_id/productos/:producto_id
+# GET /productos/1
   def show
+    if params[:pedido_producto]
+      @pedido = Pedido.find(params[:pedido_id])
+      @producto = Producto.find(params[:id])
+      render json: @pedido.productos.find(@producto.id)
+    else
   	#@producto = Producto.find(params[:id])
     render json: @producto
+    end
   end
 
+# DELETE /pedidos/:pedido_id/productos
 # DELETE /negocios/:negocio_id/productos
 # DELETE /productos
   def destroy
-  	#@producto = Producto.find(params[:id])
-    if params[:negocio_producto]
+    if params[:pedido_producto]
+      @producto = Producto.find(params[:id])
+      @pedido = Pedido.find(params[:pedido_id])
+      @pedido.productos.destroy(@producto)
+      head :no_content
+
+    elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
       @negocio.productos.destroy(@producto)
       head :no_content
@@ -35,10 +54,24 @@ class ProductosController < ApplicationController
     end
   end
 
-  # POST /productos
+  # POST /pedidos/:pedido_id/productos
   # POST /negocios/:negocio_id/productos
+  # POST /productos
   def create
-    if params[:negocio_producto]
+    if params[:pedido_producto]
+      pp = PedidoProducto.new parametros_crear_pedido_producto
+      @pedido = Pedido.find(params[:pedido_id])
+      @producto = Producto.find(params[:producto_id])
+      @negocio = @pedido.negocio_id 
+      pn = NegocioProducto.find_by negocio_id: @negocio, producto_id: @producto.id
+      pp.precio = pn.precio
+      if pp.save!
+        render json: pp, status: :created
+      else
+        render json: {:errors => {producto: ["No se ha podido agregar producto"]}}, status: :unprocessable_entity
+      end
+
+    elsif params[:negocio_producto]
       np = NegocioProducto.new parametros_crear_producto_negocio
       if np.save
         render json: np, status: :created
@@ -47,20 +80,29 @@ class ProductosController < ApplicationController
       end
     else
   	  @producto = Producto.new(parametros_producto)
-
-  	  if @producto.save
-      render json: @producto, status: :created
+      if @producto.save
+        render json: @producto, status: :created
       else
-      render json: @producto.errors, status: :unprocessable_entity
+        render json: @producto.errors, status: :unprocessable_entity
       end
     end
   end
 
   # PATCH/PUT /productos/1
   def update
-    if params[:negocio_producto]
+    if params[:pedido_producto]
+      @pedido = Pedido.find(params[:pedido_id])
+      @producto = Producto.find(params[:id])
+      pp = PedidoProducto.find_by pedido_id: @pedido.id, producto_id: @producto.id
+      if pp.update(parametros_actualizar_pedido_producto)
+        head :no_content
+      else
+        render json: @pp.errors, status: :unprocessable_entity
+      end
+
+    elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
-      np = @negocio.productos.find(@producto.id)
+      np = NegocioProducto.find_by negocio_id: @negocio.id, producto_id: @producto.id 
       if np.update(parametros_actualizar_producto_negocio)
         head :no_content
       else
@@ -98,7 +140,17 @@ class ProductosController < ApplicationController
         :precio)
     end
 
+    def parametros_crear_pedido_producto
+        params.permit(:pedido_id,
+        :producto_id,
+        :cantidad)
+    end
+
     def parametros_actualizar_producto_negocio
       params.permit(:precio)
+    end
+
+    def parametros_actualizar_pedido_producto
+      params.permit(:cantidad)
     end
 end

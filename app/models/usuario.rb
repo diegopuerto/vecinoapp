@@ -14,6 +14,7 @@ class Usuario < ActiveRecord::Base
   has_many :propietarios_negocios
   has_many :negocios_propios, through: :propietarios_negocios,
   	source: :negocio
+  has_many :pedidos, dependent: :destroy
 
   private
 

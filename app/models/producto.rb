@@ -19,6 +19,8 @@ class Producto < ActiveRecord::Base
    	has_many :negocios_productos
    	has_many :negocios, through: :negocios_productos
 
+	has_many :pedidos_productos
+        has_many :pedidos, through: :pedidos_productos
 
 end
 
