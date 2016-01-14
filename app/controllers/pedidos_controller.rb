@@ -49,6 +49,22 @@ class PedidosController < ApplicationController
     	end
     end
 
+    #POST /usuarios/:usuario_id/pedidos/
+    def create
+      if params[:usuario_pedido]
+         @usuario = Usuario.find(params[:usuario_id])
+         @pedido = Pedido.new (parametros_crear_usuario_pedido)
+         @pedido.save
+         if @pedido.update(parametros_crear_pedido_producto)
+            head :no_content
+         else 
+            render json: @usuario_pedido.errors, status: :unprocessable_entity
+         end
+      else
+        render json: @usuario_pedido.errors, status: :unprocessable_entity
+      end
+    end
+
     # DELETE /usuarios/:usuario_id/pedidos/:id
   	def destroy
   		if params[:usuario_pedido]
@@ -73,4 +89,20 @@ private
     def parametros_actualizar_usuario_negocio
     	params.permit(:estado)
     end
+
+    def parametros_crear_usuario_pedido
+      params.permit(:propina,
+        :comentario,
+        :total,
+        :estado,
+        :medio_pago,
+        :negocio_id,
+        :direccion_id,
+        :usuario_id)
+    end
+
+    def parametros_crear_pedido_producto
+      params.permit(pedidos_productos_attributes: [:cantidad, :producto_id, :precio])
+    end
+
 end

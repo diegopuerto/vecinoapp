@@ -320,7 +320,7 @@ RSpec.describe "Pedidos", type: :request do
     	end
 	end
 
-	#update negocio_pedido
+	#update usuario_pedido
   	describe "PUT /usuarios/:usuario_id/pedidos/:id" do
 
     	before :each do
@@ -368,6 +368,75 @@ RSpec.describe "Pedidos", type: :request do
         	end
     	end
   	end
+
+    # create usuarios_pedidos
+    describe "POST /usuarios/:usuario_id/pedidos/" do
+      before :each do
+
+          @producto = FactoryGirl.create :producto
+          @tienda.productos << @producto
+          expect(@tienda.productos).to include @producto
+          @direccion = FactoryGirl.create(:direccion_casa, usuario_id: @usuario_uno.id)
+          @usuario_uno.direcciones << @direccion
+          expect(@usuario_uno.direcciones).to include @direccion
+
+          @parametros_pedido = {
+          propina: @pedido_uno.propina,
+          comentario: @pedido_uno.comentario,
+          total: @pedido_uno.total,
+          estado: @pedido_uno.estado,
+          medio_pago: @pedido_uno.medio_pago,
+          negocio_id: @tienda.id,
+          direccion_id: @direccion.id,
+          pedidos_productos_attributes: [{cantidad: 5, producto_id: @producto.id, precio: 1550}]
+          }.to_json
+ 
+      end
+
+      context "Usuario no autenticado"do
+          it "No permite la petición y devuelve un mensaje de error" do
+
+            post "/usuarios/#{@usuario_uno.id}/pedidos/", @parametros_pedido, @cabeceras_peticion
+
+            expect(response.status).to eq 401 # Unauthorized
+            expect(response.body).to include("Acceso restringido. Solo Administradores")
+          end
+      end
+
+      context "Usuario no administrador autenticado" do
+          it "No le permite la petición al usuario y devuelve un mensaje de error" do
+            # Login usuario_uno
+            @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+            post "/usuarios/#{@usuario_uno.id}/pedidos/", @parametros_pedido, @cabeceras_peticion
+
+            expect(response.status).to eq 401 # Unauthorized
+            expect(response.body).to include("Acceso restringido. Solo Administradores")
+          end
+      end
+
+
+      context "Usuario administrador autenticado" do
+          it "Usuario administrador crea pedido" do
+            # Login admin
+            @cabeceras_peticion.merge! @admin.create_new_auth_token
+
+            post "/usuarios/#{@usuario_uno.id}/pedidos/", @parametros_pedido, @cabeceras_peticion
+
+            expect(response.status).to be 204 # No Content
+            expect(@usuario_uno.reload.pedidos.empty?).to be false
+            expect(@usuario_uno.pedidos.first.propina).to eq @pedido_uno.propina
+            expect(@usuario_uno.pedidos.first.comentario).to eq @pedido_uno.comentario
+            expect(@usuario_uno.pedidos.first.total).to eq @pedido_uno.total
+            expect(@usuario_uno.pedidos.first.estado).to eq @pedido_uno.estado
+            expect(@usuario_uno.pedidos.first.medio_pago).to eq @pedido_uno.medio_pago
+            expect(@usuario_uno.pedidos.first.negocio_id).to eq @tienda.id
+            expect(@usuario_uno.pedidos.first.direccion_id).to eq @direccion.id
+
+          end
+      end
+    end
+
 
   	# destroy usuarios_pedidos
   	describe "DELETE /usuarios/:usuario_id/pedidos/:id" do

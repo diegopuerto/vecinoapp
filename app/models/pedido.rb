@@ -14,6 +14,8 @@ class Pedido < ActiveRecord::Base
     end
   end
 
+  # nested attributes
+  accepts_nested_attributes_for :pedidos_productos, allow_destroy: true
     
   #Validaciones
   validates_presence_of :total, :estado, :medio_pago
