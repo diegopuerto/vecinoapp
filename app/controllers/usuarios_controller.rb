@@ -1,6 +1,6 @@
 class UsuariosController < ApplicationController
 
-  before_action :establecer_usuario, only: [:show, :destroy, :update]
+  load_and_authorize_resource
 
   # GET /usuarios
   # GET /negocios/:negocio_id/propietarios
@@ -10,7 +10,6 @@ class UsuariosController < ApplicationController
         root: 'propietarios',
         each_serializer: PropietarioSerializer
     else
-      @usuarios = Usuario.all
       render json: @usuarios
     end
   end
@@ -45,8 +44,7 @@ class UsuariosController < ApplicationController
         render json: @negocio_propio.propietarios.errors, status: :unprocessable_entity
       end
     else
-      @usuario = Usuario.new(parametros_crear_usuario)
-
+       @usuario.update(parametros_crear_usuario)
       if @usuario.save
         render json: @usuario, status: :created
       else
@@ -65,10 +63,6 @@ class UsuariosController < ApplicationController
   end
 
   private
-
-    def establecer_usuario
-      @usuario = Usuario.find(params[:id])
-    end
 
     def parametros_crear_usuario
       params.permit(:email,

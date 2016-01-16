@@ -31,6 +31,6 @@ class Usuario < ActiveRecord::Base
 		   		end
 	 		  end
 	 		end
-		end      
+		end  
 
 end

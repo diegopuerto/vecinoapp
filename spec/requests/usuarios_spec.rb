@@ -13,7 +13,7 @@ describe "Usuarios API" do
   # index
   describe "GET /usuarios" do
     context "usuario no autenticado" do
-      it "No permite la consulta y devuelve un mensaje de error" do
+      it "no permite la consulta y devuelve un mensaje de error" do
         get "/usuarios", {}, @cabeceras_peticion
 
         expect(response.status).to eq 401 # Unauthorized
@@ -21,8 +21,9 @@ describe "Usuarios API" do
       end
     end
 
+    #Cuenta para usuario dueño y no dueño
     context "usuario no administrador autenticado" do
-      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+      it "no permite la consulta al usuario y devuelve un mensaje de error" do
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
 
@@ -34,7 +35,7 @@ describe "Usuarios API" do
     end
 
     context "usuario administrador autenticado" do
-      it "Devuelve todos los usuarios" do
+      it "devuelve todos los usuarios" do
         # Login admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
 
@@ -64,7 +65,7 @@ describe "Usuarios API" do
   # show
   describe "GET /usuarios/:id" do
     context "usuario no autenticado" do
-      it "No permite la consulta y devuelve un mensaje de error" do
+      it "no permite la consulta y devuelve un mensaje de error" do
         get "/usuarios/#{@usuario_uno.id}", {}, @cabeceras_peticion
 
         expect(response.status).to eq 401 # Unauthorized
@@ -72,20 +73,40 @@ describe "Usuarios API" do
       end
     end
 
-    context "usuario no administrador autenticado" do
-      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+    context "usuario no administrador autenticado no dueño" do
+      it "no  permite la consulta al usuario y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_dos.create_new_auth_token
+
+        get "/usuarios/#{@usuario_uno.id}", {}, @cabeceras_peticion
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+
+    context "usuario no administrador autenticado dueño" do
+      it "permite la consulta al usuario" do
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
 
         get "/usuarios/#{@usuario_uno.id}", {}, @cabeceras_peticion
 
-        expect(response.status).to eq 401 # Unauthorized
-        expect(response.body).to include("Acceso restringido. Solo Administradores")
+        expect(response.status).to be 200 # OK
+        body = JSON.parse(response.body)
+        usuario = body['usuario']
+        expect(usuario["email"]).to eq @usuario_uno.email
+        expect(usuario["name"]).to eq @usuario_uno.name
+        expect(usuario["image"]).to eq @usuario_uno.image
+        expect(usuario["telefono"]).to eq @usuario_uno.telefono
+        expect(usuario["es_admin"]).to eq @usuario_uno.es_admin
+        expect(usuario["es_propietario"]).to eq @usuario_uno.es_propietario
+        
       end
     end
 
     context "usuario administrador autenticado" do
-      it "Devuelve el usuarios solicitado" do
+      it "permite la consulta al usuario" do
         # Login admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
 
@@ -107,7 +128,7 @@ describe "Usuarios API" do
   # destroy
   describe "DELETE /usuarios/:id" do
     context "usuario no autenticado" do
-      it "No permite la consulta y devuelve un mensaje de error" do
+      it "No permite la consulta al usuario y devuelve un mensaje de error" do
         delete "/usuarios/#{@usuario_uno.id}", {}, @cabeceras_peticion
 
         expect(response.status).to eq 401 # Unauthorized
@@ -116,9 +137,9 @@ describe "Usuarios API" do
     end
 
     context "usuario no administrador autenticado" do
-      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+      it "no le permite destruir al usuario y devuelve un mensaje de error" do
         # Login usuario_uno
-        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+        @cabeceras_peticion.merge! @usuario_dos.create_new_auth_token
 
         delete "/usuarios/#{@usuario_uno.id}", {}, @cabeceras_peticion
 
@@ -128,7 +149,7 @@ describe "Usuarios API" do
     end
 
     context "usuario administrador autenticado" do
-      it "Elimina un usuario" do
+      it "elimina un usuario" do
         # Login admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
 
@@ -149,16 +170,22 @@ describe "Usuarios API" do
     end
 
     context "usuario no autenticado" do
-      it "No permite la consulta y devuelve un mensaje de error" do
+      it "permite la creacion de usuario" do
         post "/usuarios", @parametros_usuario, @cabeceras_peticion
 
-        expect(response.status).to eq 401 # Unauthorized
-        expect(response.body).to include("Acceso restringido. Solo Administradores")
+        expect(response.status).to eq 201 # Created
+        expect(Usuario.last.email).to eq @usuario_nuevo.email
+        expect(Usuario.last.name).to eq @usuario_nuevo.name
+        expect(Usuario.last.image).to eq @usuario_nuevo.image
+        expect(Usuario.last.telefono).to eq @usuario_nuevo.telefono
+        expect(Usuario.last.es_admin).to eq @usuario_nuevo.es_admin
+        expect(Usuario.last.es_propietario).to eq @usuario_nuevo.es_propietario
       end
     end
 
+    #Sirve como contexto de usuario autenticado no dueño y usuario autenticado dueño
     context "usuario no administrador autenticado" do
-      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+      it "no le permite la consulta al usuario y devuelve un mensaje de error" do
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
 
@@ -169,8 +196,9 @@ describe "Usuarios API" do
       end
     end
 
+
     context "usuario administrador autenticado" do
-      it "Crea un usuario" do
+      it "permite la creacion de un usuario" do
         # Login admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
 
@@ -196,7 +224,7 @@ describe "Usuarios API" do
     end
 
     context "usuario no autenticado" do
-      it "No permite la consulta y devuelve un mensaje de error" do
+      it "no permite la consulta y devuelve un mensaje de error" do
         put "/usuarios/#{@usuario_uno.id}", @parametros_usuario, @cabeceras_peticion
 
         expect(response.status).to eq 401 # Unauthorized
@@ -204,20 +232,37 @@ describe "Usuarios API" do
       end
     end
 
-    context "usuario no administrador autenticado" do
-      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+    context "usuario no administrador autenticado no dueño" do
+      it "no permite la consulta y devuelve un mensaje de error" do
+        # Login usuario_uno
+        @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
+
+        put "/usuarios/#{@usuario_dos.id}", @parametros_usuario, @cabeceras_peticion
+
+        expect(response.status).to eq 401 # Unauthorized
+        expect(response.body).to include("Acceso restringido. Solo Administradores")
+      end
+    end
+
+    context "usuario no administrador autenticado dueño" do
+      it "actualiza un usuario" do
         # Login usuario_uno
         @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
 
         put "/usuarios/#{@usuario_uno.id}", @parametros_usuario, @cabeceras_peticion
 
-        expect(response.status).to eq 401 # Unauthorized
-        expect(response.body).to include("Acceso restringido. Solo Administradores")
+        expect(response.status).to be 204 # No content
+        expect(Usuario.find(@usuario_uno.id).email).to eq @usuario_nuevo.email
+        expect(Usuario.find(@usuario_uno.id).name).to eq @usuario_nuevo.name
+        expect(Usuario.find(@usuario_uno.id).image).to eq @usuario_nuevo.image
+        expect(Usuario.find(@usuario_uno.id).telefono).to eq @usuario_nuevo.telefono
+        expect(Usuario.find(@usuario_uno.id).es_admin).to eq @usuario_uno.es_admin
+        expect(Usuario.find(@usuario_uno.id).es_propietario).to eq @usuario_uno.es_propietario
       end
     end
 
     context "usuario administrador autenticado" do
-      it "Actualiza un usuario" do
+      it "actualiza un usuario" do
         # Login admin
         @cabeceras_peticion.merge! @admin.create_new_auth_token
 

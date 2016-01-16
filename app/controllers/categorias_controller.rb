@@ -1,5 +1,6 @@
 class CategoriasController < ApplicationController
 	before_action :establecer_categoria, only: [:show, :destroy, :update]
+  authorize_resource
 
 	# GET /categorias
   # GET /productos/:producto_id/categorias

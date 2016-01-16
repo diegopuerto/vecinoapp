@@ -1,6 +1,6 @@
 class NegociosController < ApplicationController
 	  before_action :establecer_negocio, only: [:show, :destroy, :update]
-
+    authorize_resource
   # GET /negocios
   # GET /usuarios/:usuario_id/negocios_propios
   def index

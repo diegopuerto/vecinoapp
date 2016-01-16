@@ -41,6 +41,7 @@ GEM
     arel (6.0.3)
     bcrypt (3.1.10)
     builder (3.2.2)
+    cancancan (1.13.1)
     choice (0.2.0)
     devise (3.5.1)
       bcrypt (~> 3.0)
@@ -161,6 +162,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers (= 0.8.3)
+  cancancan (~> 1.13, >= 1.13.1)
   devise (= 3.5.1)
   devise_token_auth (= 0.1.31)
   factory_girl_rails (= 4.5.0)
@@ -175,3 +177,6 @@ DEPENDENCIES
   rspec-rails (~> 3.3.3)
   spring (= 1.3.6)
   sqlite3 (= 1.3.10)
+
+BUNDLED WITH
+   1.10.6

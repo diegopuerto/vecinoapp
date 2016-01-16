@@ -1,6 +1,11 @@
 class ApplicationController < ActionController::API
   include DeviseTokenAuth::Concerns::SetUserByToken
-  before_action :validar_admin
+  include CanCan::ControllerAdditions
+ # before_action :validar_admin
+
+ rescue_from CanCan::AccessDenied do |exception|
+      render json: { errors: "Acceso restringido. Solo Administradores"  }, status: :unauthorized
+ end
 
   private
 
@@ -9,4 +14,10 @@ class ApplicationController < ActionController::API
         render json: { errors: "Acceso restringido. Solo Administradores"  }, status: :unauthorized
       end
     end
+
+  def current_ability
+      @current_ability ||= Ability.new(current_usuario)
+  end
+
+
 end

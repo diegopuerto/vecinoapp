@@ -1,5 +1,7 @@
 class PedidosController < ApplicationController
 
+authorize_resource
+
 	# GET /negocios/:negocio_id/pedidos
   	def index
   		if params[:usuario_pedido]

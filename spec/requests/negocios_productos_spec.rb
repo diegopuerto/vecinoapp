@@ -20,24 +20,42 @@ end
     end
 
     context "usuario no autenticado" do
-      it "No permite la consulta y devuelve un mensaje de error" do
+      it "Devuelve todos los productos del negocio con id :negocio_id" do
 
           get "/negocios/#{@tienda.id}/productos", {}, @cabeceras_peticion
 
-          expect(response.status).to eq 401 # Unauthorized
-          expect(response.body).to include("Acceso restringido. Solo Administradores")
+          expect(response.status).to eq 200 # OK
+
+          body = JSON.parse(response.body)
+          productos = body['productos']
+
+          nombres_producto = productos.map { |m| m["nombre"] }
+          imagenes_producto = productos.map { |m| m["imagen"] }
+
+          expect(nombres_producto).to match_array([@jugo.nombre, @leche.nombre ]) 
+          expect(imagenes_producto).to match_array([@jugo.imagen, @leche.imagen ])
+
       end
     end
 
     context "usuario no administrador autenticado" do
-      it "No le permite la consulta al usuario y devuelve un mensaje de error" do
+      it "Devuelve todos los productos del negocio con id :negocio_id" do
 
           @cabeceras_peticion.merge! @usuario_uno.create_new_auth_token
 
           get "/negocios/#{@tienda.id}/productos", {}, @cabeceras_peticion
 
-          expect(response.status).to eq 401 # Unauthorized
-          expect(response.body).to include("Acceso restringido. Solo Administradores")
+          expect(response.status).to eq 200 # OK
+
+          body = JSON.parse(response.body)
+          productos = body['productos']
+
+          nombres_producto = productos.map { |m| m["nombre"] }
+          imagenes_producto = productos.map { |m| m["imagen"] }
+
+          expect(nombres_producto).to match_array([@jugo.nombre, @leche.nombre ]) 
+          expect(imagenes_producto).to match_array([@jugo.imagen, @leche.imagen ])
+
       end
     end
 

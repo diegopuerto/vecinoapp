@@ -1,5 +1,6 @@
 class ProductosController < ApplicationController
-		before_action :establecer_producto, only: [:show, :destroy, :update]
+  
+    load_and_authorize_resource
 
 # GET /pedidos/:pedido_id/productos
 # GET /negocios/:negocio_id/productos
@@ -16,7 +17,6 @@ class ProductosController < ApplicationController
       @negocio.productos.reload
       render json: @negocio.productos.con_precio
     else
-      @productos = Producto.all
       render json: @productos
     end
   end
@@ -29,7 +29,6 @@ class ProductosController < ApplicationController
       @producto = Producto.find(params[:id])
       render json: @pedido.productos.find(@producto.id)
     else
-  	#@producto = Producto.find(params[:id])
     render json: @producto
     end
   end
@@ -39,7 +38,6 @@ class ProductosController < ApplicationController
 # DELETE /productos
   def destroy
     if params[:pedido_producto]
-      @producto = Producto.find(params[:id])
       @pedido = Pedido.find(params[:pedido_id])
       @pedido.productos.destroy(@producto)
       head :no_content
@@ -79,7 +77,7 @@ class ProductosController < ApplicationController
         render json: {:errors => {producto: ["No se ha podido agregar producto"]}}, status: :unprocessable_entity
       end
     else
-  	  @producto = Producto.new(parametros_producto)
+      @producto.update(parametros_producto)
       if @producto.save
         render json: @producto, status: :created
       else
@@ -120,10 +118,6 @@ class ProductosController < ApplicationController
 
 
 	private
-   
-    def establecer_producto
-      @producto = Producto.find(params[:id])
-    end
 
     def parametros_producto
     	params.permit(:nombre,

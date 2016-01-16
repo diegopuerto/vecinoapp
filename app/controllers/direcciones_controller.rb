@@ -1,5 +1,5 @@
 class DireccionesController < ApplicationController
-
+  authorize_resource
   before_action :establecer_direccion, only: [:show, :destroy, :update]
   before_action :establecer_usuario, only: [:index, :create]
 

@@ -9,7 +9,7 @@ gem 'active_model_serializers', '0.8.3'
 gem 'devise', '3.5.1'
 gem 'devise_token_auth', '0.1.31'
 gem 'omniauth', '1.2.2'
-
+gem 'cancancan', '~> 1.13', '>= 1.13.1'
 
 group :development, :test do
   gem 'spring', '1.3.6'
