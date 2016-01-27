@@ -13,11 +13,15 @@ class Ability
         can [:update, :destroy], Negocio do |negocio|
             negocio.propietarios.map(&:id).include? user.id
         end
-        can :read, Producto
+        can [:read, :update], Pedido, usuario_id: user.id
+        can [:read,:update], Pedido do |pedido|
+            pedido.negocio.propietarios.map(&:id).include? user.id 
+        end
+        can :read, Negocio
+        can :manage, Direccion, :usuario_id => user.id
     else
         can :create, Usuario
         can :read, Negocio
-        can :read, Producto
     end
 
 

@@ -1,10 +1,12 @@
 class DireccionesController < ApplicationController
-  authorize_resource
-  before_action :establecer_direccion, only: [:show, :destroy, :update]
-  before_action :establecer_usuario, only: [:index, :create]
+
+  before_action :establecer_usuario, only: [:index, :show, :create]
+  load_and_authorize_resource except: [:index, :create]
+  skip_load_resource :create
 
   # GET /usuarios/:id/direcciones
   def index
+    authorize! :show, @usuario
     render json: @usuario.direcciones
   end
 
@@ -22,7 +24,8 @@ class DireccionesController < ApplicationController
   # POST /usuarios/:id/direcciones
   def create
     @direccion = @usuario.direcciones.new(parametros_direccion)
-
+    authorize! :show, @usuario
+    
     if @direccion.save
       render json: @direccion, status: :created
     else

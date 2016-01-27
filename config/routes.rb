@@ -74,6 +74,9 @@ Rails.application.routes.draw do
          defaults: { pedido_producto: true }
    end
 
+   resources :negocios_productos,
+   except: [:edit, :new],
+   defaults: { format: :json }
 
   root 'welcome#index'
 end

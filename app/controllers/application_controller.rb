@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
 
  rescue_from CanCan::AccessDenied do |exception|
       render json: { errors: "Acceso restringido. Solo Administradores"  }, status: :unauthorized
+      Rails.logger.debug "Access denied on #{exception.action} #{exception.subject.inspect}"
  end
 
   private
@@ -18,6 +19,5 @@ class ApplicationController < ActionController::API
   def current_ability
       @current_ability ||= Ability.new(current_usuario)
   end
-
 
 end

@@ -1,6 +1,6 @@
 class ProductosController < ApplicationController
 
-    load_resource
+    load_and_authorize_resource
 
 # GET /pedidos/:pedido_id/productos
 # GET /negocios/:negocio_id/productos
@@ -8,44 +8,30 @@ class ProductosController < ApplicationController
   def index
     if params[:pedido_producto]
       @pedido = Pedido.find(params[:pedido_id])
-      authorize! :read, @pedido
       @pedido.productos.reload
       render json: @pedido.productos.con_precio
 
     elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
       # Actualizar colección de productos
-      authorize! :read, @negocio
       @negocio.productos.reload
       render json: @negocio.productos.con_precio
     else
-      authorize! :read, @producto
       render json: @productos
     end
   end
 
 # GET /pedidos/:pedido_id/productos/:producto_id
-# GET /pedidos/:negocio_id/productos/:producto_id
 # GET /productos/1
   def show
     if params[:pedido_producto]
       @pedido = Pedido.find(params[:pedido_id])
-      authorize! :read, @pedido
       @producto = Producto.find(params[:id])
       render json: @pedido.productos.find(@producto.id)
-    elsif params[:negocio_producto]
-      @negocio = Negocio.find(params[:negocio_id])
-      authorize! :read, @negocio
-      @negocio.productos.reload
-      np = NegocioProducto.find_by negocio_id: @negocio.id, producto_id: params[:id]
-      @producto.precio = np.precio
-      render json: @producto
     else
-      authorize! :read, @producto
-      render json: @producto
+    render json: @producto
     end
   end
-
 
 # DELETE /pedidos/:pedido_id/productos
 # DELETE /negocios/:negocio_id/productos
@@ -53,17 +39,14 @@ class ProductosController < ApplicationController
   def destroy
     if params[:pedido_producto]
       @pedido = Pedido.find(params[:pedido_id])
-      authorize! :update, @pedido
       @pedido.productos.destroy(@producto)
       head :no_content
 
     elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
-      authorize! :update, @negocio
       @negocio.productos.destroy(@producto)
       head :no_content
     else
-      authorize! :destroy, @producto
   	  @producto.destroy
       head :no_content
     end
@@ -76,7 +59,6 @@ class ProductosController < ApplicationController
     if params[:pedido_producto]
       pp = PedidoProducto.new parametros_crear_pedido_producto
       @pedido = Pedido.find(params[:pedido_id])
-      authorize! :update, @pedido
       @producto = Producto.find(params[:producto_id])
       @negocio = @pedido.negocio_id 
       pn = NegocioProducto.find_by negocio_id: @negocio, producto_id: @producto.id
@@ -88,8 +70,6 @@ class ProductosController < ApplicationController
       end
 
     elsif params[:negocio_producto]
-      @negocio = Negocio.find(params[:negocio_id])
-      authorize! :update, @negocio
       np = NegocioProducto.new parametros_crear_producto_negocio
       if np.save
         render json: np, status: :created
@@ -97,7 +77,6 @@ class ProductosController < ApplicationController
         render json: {:errors => {producto: ["No se ha podido agregar producto"]}}, status: :unprocessable_entity
       end
     else
-      authorize! :create, @producto
       @producto.update(parametros_producto)
       if @producto.save
         render json: @producto, status: :created
@@ -111,7 +90,6 @@ class ProductosController < ApplicationController
   def update
     if params[:pedido_producto]
       @pedido = Pedido.find(params[:pedido_id])
-      authorize! :update, @pedido
       @producto = Producto.find(params[:id])
       pp = PedidoProducto.find_by pedido_id: @pedido.id, producto_id: @producto.id
       if pp.update(parametros_actualizar_pedido_producto)
@@ -122,7 +100,6 @@ class ProductosController < ApplicationController
 
     elsif params[:negocio_producto]
       @negocio = Negocio.find(params[:negocio_id])
-      authorize! :update, @negocio
       np = NegocioProducto.find_by negocio_id: @negocio.id, producto_id: @producto.id 
       if np.update(parametros_actualizar_producto_negocio)
         head :no_content
@@ -131,7 +108,6 @@ class ProductosController < ApplicationController
       end
 
     else  
-      authorize! :update, @producto
       if @producto.update(parametros_producto)
         head :no_content
       else

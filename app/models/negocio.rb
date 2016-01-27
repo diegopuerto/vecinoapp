@@ -44,6 +44,14 @@ class Negocio < ActiveRecord::Base
         p.precio = precionegocio
       end
     end
+
+    def encuentra_producto(producto_id)
+      p = Producto.find(producto_id)
+      #producto = proxy_association.target.find(producto_id) 
+      np = NegocioProducto.find_by negocio_id: proxy_association.owner, producto_id: producto_id
+      p.precio = np.precio
+    end
+
   end
 
   private

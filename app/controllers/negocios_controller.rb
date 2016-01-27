@@ -1,10 +1,12 @@
 class NegociosController < ApplicationController
 	  before_action :establecer_negocio, only: [:show, :destroy, :update]
-    authorize_resource
+
   # GET /negocios
   # GET /usuarios/:usuario_id/negocios_propios
   def index
     if params[:propietario]
+      @usuario = Usuario.find(params[:usuario_id])
+      authorize! :show, @usuario
       @negocios_propios = Usuario.find(params[:usuario_id]).negocios_propios
       render json: @negocios_propios,
         root: 'negocios_propios',
@@ -25,10 +27,12 @@ class NegociosController < ApplicationController
   def destroy
     if params[:propietario]
       @propietario = Usuario.find(params[:usuario_id])
+      authorize! :destroy, @negocio
       @propietario.negocios_propios.destroy(@negocio)
       head :no_content
     else
       @negocio.destroy
+      authorize! :destroy, @negocio
       head :no_content
     end
   end
@@ -39,6 +43,7 @@ class NegociosController < ApplicationController
     if params[:propietario]
       @negocio_propio = Negocio.find(params[:negocio_id])
       @propietario = Usuario.find(params[:usuario_id])
+      authorize! :update, @propietario
       if @propietario.negocios_propios << @negocio_propio
         render json: @propietario.negocios_propios, status: :created
       else
@@ -46,7 +51,7 @@ class NegociosController < ApplicationController
       end
     else
       @negocio = Negocio.new(parametros_negocio)
-
+      authorize! :create, Negocio
       if @negocio.save
         render json: @negocio, status: :created
       else
@@ -57,6 +62,7 @@ class NegociosController < ApplicationController
 
   # PATCH/PUT /negocios/1
   def update
+    authorize! :update, @negocio
     if @negocio.update(parametros_negocio)
       head :no_content
     else
